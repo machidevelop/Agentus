@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Natilah V1 — Counterfactual AI Infrastructure Intelligence & Value Discovery Layer">
+  <title>Natilah | Counterfactual Infrastructure Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Navigation Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-mark">N</div>
+        <div class="brand-text">
+          <h1>NATILAH</h1>
+          <span class="sub-brand">Counterfactual Infrastructure Intelligence</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="safety-badge" id="safetyBadge" title="System operates strictly in read-only mode">
+          <span class="pulse-dot"></span>
+          <span class="safety-label">Production Changes Made: <strong>0</strong></span>
+          <span class="mode-tag">READ-ONLY</span>
+        </div>
+        <button class="btn btn-secondary" id="btnCostConfig">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Cost Model
+        </button>
+        <button class="btn btn-secondary" id="btnGenerate">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          Generate Data
+        </button>
+        <button class="btn btn-primary" id="btnRunAnalysis">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Run Intelligence Pipeline
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+      <!-- KPI Metric Banner Grid -->
+      <section class="kpi-banner">
+        <div class="kpi-card">
+          <div class="kpi-label">GPUs Analyzed</div>
+          <div class="kpi-value" id="kpiGpus">--</div>
+          <div class="kpi-subtext">Active cluster footprint</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Decisions Reconstructed</div>
+          <div class="kpi-value" id="kpiDecisions">--</div>
+          <div class="kpi-subtext">Scheduler choices analyzed</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Opportunities Found</div>
+          <div class="kpi-value" id="kpiOpportunities">--</div>
+          <div class="kpi-subtext">Feasible alternative actions</div>
+        </div>
+        <div class="kpi-card highlight-card">
+          <div class="kpi-label">Recoverable Compute</div>
+          <div class="kpi-value" id="kpiHours">--</div>
+          <div class="kpi-subtext" id="kpiEquivGpus">-- Equivalent GPUs</div>
+        </div>
+        <div class="kpi-card value-card">
+          <div class="kpi-label">Discovered Monthly Value</div>
+          <div class="kpi-value" id="kpiMonthly">--</div>
+          <div class="kpi-subtext" id="kpiAnnual">Annual: --</div>
+        </div>
+      </section>
+
+      <!-- Main Feed & Filter Controls -->
+      <section class="feed-section">
+        <div class="feed-header">
+          <div class="feed-title-block">
+            <h2>Counterfactual Opportunity Feed</h2>
+            <p class="feed-subtitle">Investigated decisions ranked by recoverable economic value</p>
+          </div>
+          <div class="feed-filters">
+            <select id="filterType" class="select-input">
+              <option value="all">All Opportunity Types</option>
+              <option value="over_allocation">Over-Allocation</option>
+              <option value="poor_placement">Poor Placement</option>
+              <option value="fragmentation">Stranded Fragmentation</option>
+              <option value="idle_allocation">Idle Allocation</option>
+              <option value="queue_inefficiency">Queue Inefficiency</option>
+            </select>
+            <select id="filterConfidence" class="select-input">
+              <option value="all">All Confidence Levels</option>
+              <option value="high">High Confidence (≥0.75)</option>
+              <option value="medium">Medium Confidence (0.50-0.74)</option>
+              <option value="low">Low Confidence (<0.50)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Opportunity Cards Grid -->
+        <div class="opportunity-list" id="opportunityList">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading counterfactual infrastructure intelligence...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Opportunity Detail Modal -->
+    <div class="modal-backdrop" id="opportunityModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="badge" id="modalTypeBadge">TYPE</span>
+            <h3 id="modalTitle">Opportunity Details</h3>
+          </div>
+          <button class="close-btn" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Dynamic detail content populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost Configuration Modal -->
+    <div class="modal-backdrop" id="costModal">
+      <div class="modal-dialog modal-md">
+        <div class="modal-header">
+          <h3>Economic Cost Model Configuration</h3>
+          <button class="close-btn" id="costModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="costForm">
+            <div class="form-group">
+              <label>A100-80GB Cost ($/GPU-Hour)</label>
+              <input type="number" step="0.01" id="costA100" class="text-input" required>
+            </div>
+            <div class="form-group">
+              <label>H100-80GB Cost ($/GPU-Hour)</label>
+              <input type="number" step="0.01" id="costH100" class="text-input" required>
+            </div>
+            <div class="form-group">
+              <label>Facility Cost Multiplier (Power/Cooling)</label>
+              <input type="number" step="0.1" id="costFacility" class="text-input" required>
+            </div>
+            <div class="form-group">
+              <label>Working Hours per Month</label>
+              <input type="number" step="1" id="costHoursPerMonth" class="text-input" required>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn btn-secondary" id="costCancel">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Cost Model</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Logic Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/charts.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

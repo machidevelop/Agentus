@@ -1,0 +1,34 @@
+[project]
+name = "natilah"
+version = "0.1.0"
+description = "AI Infrastructure Intelligence Layer — GPU compute economics"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.5.0",
+    "sqlalchemy>=2.0.30",
+    "aiosqlite>=0.20.0",
+    "numpy>=1.26.0",
+    "scipy>=1.14.0",
+    "python-multipart>=0.0.9",
+    "openai>=1.60.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.27.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.setuptools.packages.find]
+include = ["natilah*"]
