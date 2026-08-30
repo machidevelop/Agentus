@@ -1,0 +1,2206 @@
+{
+  "generated_at": "2026-08-29T16:16:14.978195+00:00",
+  "summary": {
+    "total_findings": 77,
+    "recovery_pct": 0.26,
+    "total_gpu_hours_recovered": 19.7,
+    "total_idle_hours_recovered": 80.8,
+    "total_monthly_value": 853.19,
+    "avg_confidence": 0.79,
+    "high_confidence_count": 67,
+    "findings_by_type": {
+      "queue_inefficiency": 75,
+      "idle_allocation": 2
+    }
+  },
+  "top_findings": [
+    {
+      "rank": 1,
+      "opportunity_id": "cf42b81f-184d-4879-8a55-13b8932d2c2c",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 290fc1831b76980f49c7f7a1f3fd423b waited 1047 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "290fc1831b76980f49c7f7a1f3fd423b",
+      "affected_jobs": [
+        "290fc1831b76980f49c7f7a1f3fd423b",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "bcf5b4ce34638b649938441c0e897564-gpu-0",
+        "bcf5b4ce34638b649938441c0e897564-gpu-1",
+        "bcf5b4ce34638b649938441c0e897564-gpu-2",
+        "bcf5b4ce34638b649938441c0e897564-gpu-3",
+        "bcf5b4ce34638b649938441c0e897564-gpu-4",
+        "bcf5b4ce34638b649938441c0e897564-gpu-5",
+        "bcf5b4ce34638b649938441c0e897564-gpu-6",
+        "bcf5b4ce34638b649938441c0e897564-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 290fc1831b76980f49c7f7a1f3fd423b could have started without waiting 1047 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "290fc1831b76980f49c7f7a1f3fd423b",
+          "unblocked_job_ids": [
+            "290fc1831b76980f49c7f7a1f3fd423b"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 62815.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 62815.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 139.59,
+        "compute_cost_avoided": 308.49,
+        "equivalent_gpus": 0.098,
+        "monthly_value": 156.37,
+        "annual_value": 1876.4,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.713,
+        "level": "medium",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 290fc1831b76980f49c7f7a1f3fd423b waited 1047 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is medium (0.71)."
+      },
+      "review": {
+        "verdict": "REVIEW",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 62.5h | Queue reduction: 1047 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 2,
+      "opportunity_id": "7ef25e83-7831-4a8d-9aab-ac2a2323a931",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job bcac9da15bf8d17affeb2d0e7fa80a56 waited 556 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "bcac9da15bf8d17affeb2d0e7fa80a56",
+      "affected_jobs": [
+        "bcac9da15bf8d17affeb2d0e7fa80a56",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "4b4f54f95feee7736659c7c717e290c9-gpu-0",
+        "4b4f54f95feee7736659c7c717e290c9-gpu-1",
+        "4b4f54f95feee7736659c7c717e290c9-gpu-2",
+        "4b4f54f95feee7736659c7c717e290c9-gpu-3",
+        "4b4f54f95feee7736659c7c717e290c9-gpu-4",
+        "4b4f54f95feee7736659c7c717e290c9-gpu-5",
+        "4b4f54f95feee7736659c7c717e290c9-gpu-6",
+        "4b4f54f95feee7736659c7c717e290c9-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, bcac9da15bf8d17affeb2d0e7fa80a56 could have started without waiting 556 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "bcac9da15bf8d17affeb2d0e7fa80a56",
+          "unblocked_job_ids": [
+            "bcac9da15bf8d17affeb2d0e7fa80a56"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 33330.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 33330.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 74.07,
+        "compute_cost_avoided": 163.69,
+        "equivalent_gpus": 0.052,
+        "monthly_value": 82.97,
+        "annual_value": 995.63,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.807,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job bcac9da15bf8d17affeb2d0e7fa80a56 waited 556 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.81)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 0.2h | Queue reduction: 556 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 3,
+      "opportunity_id": "a4bae5a6-a3bb-47a1-b416-61c80e2f3c23",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job b5284eef7d894d5b7eaaabbe71be18da waited 493 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "b5284eef7d894d5b7eaaabbe71be18da",
+      "affected_jobs": [
+        "b5284eef7d894d5b7eaaabbe71be18da",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "86ee537149643a76d0e63022d1533872-gpu-0",
+        "86ee537149643a76d0e63022d1533872-gpu-1",
+        "86ee537149643a76d0e63022d1533872-gpu-2",
+        "86ee537149643a76d0e63022d1533872-gpu-3",
+        "86ee537149643a76d0e63022d1533872-gpu-4",
+        "86ee537149643a76d0e63022d1533872-gpu-5",
+        "86ee537149643a76d0e63022d1533872-gpu-6",
+        "86ee537149643a76d0e63022d1533872-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, b5284eef7d894d5b7eaaabbe71be18da could have started without waiting 493 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "b5284eef7d894d5b7eaaabbe71be18da",
+          "unblocked_job_ids": [
+            "b5284eef7d894d5b7eaaabbe71be18da"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 29600.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 29600.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 65.78,
+        "compute_cost_avoided": 145.37,
+        "equivalent_gpus": 0.046,
+        "monthly_value": 73.68,
+        "annual_value": 884.21,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.815,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job b5284eef7d894d5b7eaaabbe71be18da waited 493 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.82)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 0.6h | Queue reduction: 493 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 4,
+      "opportunity_id": "0ba1b564-349a-466e-b17e-d404c527c009",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 2e6a395526c59a355defd71eaec7a11f waited 468 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "2e6a395526c59a355defd71eaec7a11f",
+      "affected_jobs": [
+        "2e6a395526c59a355defd71eaec7a11f",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "866b51fe0a4479272d078e03065fb421-gpu-0",
+        "866b51fe0a4479272d078e03065fb421-gpu-1",
+        "866b51fe0a4479272d078e03065fb421-gpu-2",
+        "866b51fe0a4479272d078e03065fb421-gpu-3",
+        "866b51fe0a4479272d078e03065fb421-gpu-4",
+        "866b51fe0a4479272d078e03065fb421-gpu-5",
+        "866b51fe0a4479272d078e03065fb421-gpu-6",
+        "866b51fe0a4479272d078e03065fb421-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 2e6a395526c59a355defd71eaec7a11f could have started without waiting 468 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "2e6a395526c59a355defd71eaec7a11f",
+          "unblocked_job_ids": [
+            "2e6a395526c59a355defd71eaec7a11f"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 28075.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 28075.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 62.39,
+        "compute_cost_avoided": 137.88,
+        "equivalent_gpus": 0.044,
+        "monthly_value": 69.89,
+        "annual_value": 838.65,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.812,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 2e6a395526c59a355defd71eaec7a11f waited 468 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.81)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 0.1h | Queue reduction: 468 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 5,
+      "opportunity_id": "3f6484da-3339-432a-ad9c-5a6cc7f31129",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 2982533fe4c3d8beed9c6c5dc4e3b0db waited 369 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "2982533fe4c3d8beed9c6c5dc4e3b0db",
+      "affected_jobs": [
+        "2982533fe4c3d8beed9c6c5dc4e3b0db",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "063f0f62f453242a9163ffdf044d19e5-gpu-0",
+        "063f0f62f453242a9163ffdf044d19e5-gpu-1",
+        "063f0f62f453242a9163ffdf044d19e5-gpu-2",
+        "063f0f62f453242a9163ffdf044d19e5-gpu-3",
+        "063f0f62f453242a9163ffdf044d19e5-gpu-4",
+        "063f0f62f453242a9163ffdf044d19e5-gpu-5",
+        "063f0f62f453242a9163ffdf044d19e5-gpu-6",
+        "063f0f62f453242a9163ffdf044d19e5-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 2982533fe4c3d8beed9c6c5dc4e3b0db could have started without waiting 369 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "2982533fe4c3d8beed9c6c5dc4e3b0db",
+          "unblocked_job_ids": [
+            "2982533fe4c3d8beed9c6c5dc4e3b0db"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 22114.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 22114.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 49.14,
+        "compute_cost_avoided": 108.6,
+        "equivalent_gpus": 0.035,
+        "monthly_value": 55.05,
+        "annual_value": 660.59,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.774,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 2982533fe4c3d8beed9c6c5dc4e3b0db waited 369 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.77)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 3.3h | Queue reduction: 369 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 6,
+      "opportunity_id": "38078f89-0785-4460-8ff3-169c102ec16c",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 36a7aa2bf8fdb4f9cb07401b025d339f waited 334 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "36a7aa2bf8fdb4f9cb07401b025d339f",
+      "affected_jobs": [
+        "36a7aa2bf8fdb4f9cb07401b025d339f",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "f914922d0cb3c526ff98410a34edcdf1-gpu-0",
+        "f914922d0cb3c526ff98410a34edcdf1-gpu-1",
+        "f914922d0cb3c526ff98410a34edcdf1-gpu-2",
+        "f914922d0cb3c526ff98410a34edcdf1-gpu-3",
+        "f914922d0cb3c526ff98410a34edcdf1-gpu-4",
+        "f914922d0cb3c526ff98410a34edcdf1-gpu-5",
+        "f914922d0cb3c526ff98410a34edcdf1-gpu-6",
+        "f914922d0cb3c526ff98410a34edcdf1-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 36a7aa2bf8fdb4f9cb07401b025d339f could have started without waiting 334 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "36a7aa2bf8fdb4f9cb07401b025d339f",
+          "unblocked_job_ids": [
+            "36a7aa2bf8fdb4f9cb07401b025d339f"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 20037.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 20037.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 44.53,
+        "compute_cost_avoided": 98.4,
+        "equivalent_gpus": 0.031,
+        "monthly_value": 49.88,
+        "annual_value": 598.54,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.715,
+        "level": "medium",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 36a7aa2bf8fdb4f9cb07401b025d339f waited 334 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is medium (0.72)."
+      },
+      "review": {
+        "verdict": "REVIEW",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 14.3h | Queue reduction: 334 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 7,
+      "opportunity_id": "4259affb-f186-4ab0-bece-49dcb8c0f4cc",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job b8f980e9adc487ef175813a5bb8090f1 waited 168 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "b8f980e9adc487ef175813a5bb8090f1",
+      "affected_jobs": [
+        "b8f980e9adc487ef175813a5bb8090f1",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "abf08efeaa46a68675a49539ddf0f398-gpu-0",
+        "abf08efeaa46a68675a49539ddf0f398-gpu-1",
+        "abf08efeaa46a68675a49539ddf0f398-gpu-2",
+        "abf08efeaa46a68675a49539ddf0f398-gpu-3",
+        "abf08efeaa46a68675a49539ddf0f398-gpu-4",
+        "abf08efeaa46a68675a49539ddf0f398-gpu-5",
+        "abf08efeaa46a68675a49539ddf0f398-gpu-6",
+        "abf08efeaa46a68675a49539ddf0f398-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, b8f980e9adc487ef175813a5bb8090f1 could have started without waiting 168 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "b8f980e9adc487ef175813a5bb8090f1",
+          "unblocked_job_ids": [
+            "b8f980e9adc487ef175813a5bb8090f1"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 10069.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 10069.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 22.38,
+        "compute_cost_avoided": 49.45,
+        "equivalent_gpus": 0.016,
+        "monthly_value": 25.06,
+        "annual_value": 300.78,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.748,
+        "level": "medium",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job b8f980e9adc487ef175813a5bb8090f1 waited 168 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is medium (0.75)."
+      },
+      "review": {
+        "verdict": "REVIEW",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 4.8h | Queue reduction: 168 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 8,
+      "opportunity_id": "b947f5ea-3438-4789-b7cd-032addc831fe",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 83d0336f174ac79463064c4406a58163 waited 629 minutes. At submit time, 12 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "83d0336f174ac79463064c4406a58163",
+      "affected_jobs": [
+        "83d0336f174ac79463064c4406a58163",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "d35a6afeb937d961ee72f46b094f75b5",
+        "227761136591726babd92853a63339f1",
+        "92633a6d8501074606d1f372667d547e",
+        "ecc30e3df0b978da12a98944da4c160f",
+        "dab19c759fec289f61fe5ffd8d079cba",
+        "af0f4a7aef55fc7fea24afb78f060838",
+        "7233a182719543c9bfe1c33b701f10d9",
+        "1b0d1c1092659a25ff8456996588ceb8",
+        "83631408a601eb4e9ca37d77214a1ffa",
+        "23b5529a2f01ffdf1a381e0c9d560331",
+        "a22f1407ee09fcfad01cf6d6b933d07f"
+      ],
+      "affected_gpus": [
+        "4c3fd1cc780c6c152aaa96f7295589c8-gpu-0",
+        "4c3fd1cc780c6c152aaa96f7295589c8-gpu-1"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 83d0336f174ac79463064c4406a58163 could have started without waiting 629 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 2,
+          "start_job_id": "83d0336f174ac79463064c4406a58163",
+          "unblocked_job_ids": [
+            "83d0336f174ac79463064c4406a58163"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 37716.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 37716.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 20.95,
+        "compute_cost_avoided": 46.31,
+        "equivalent_gpus": 0.015,
+        "monthly_value": 23.47,
+        "annual_value": 281.66,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.801,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 83d0336f174ac79463064c4406a58163 waited 629 minutes. At submit time, 12 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 2 GPUs | Job duration: 11.0h | Queue reduction: 629 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 9,
+      "opportunity_id": "183990a0-e3c8-40e8-8f42-4eea62a1993a",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 9f35e76f10e65660443cb0bcb2578649 waited 157 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "9f35e76f10e65660443cb0bcb2578649",
+      "affected_jobs": [
+        "9f35e76f10e65660443cb0bcb2578649",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-0",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-1",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-2",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-3",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-4",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-5",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-6",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 9f35e76f10e65660443cb0bcb2578649 could have started without waiting 157 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "9f35e76f10e65660443cb0bcb2578649",
+          "unblocked_job_ids": [
+            "9f35e76f10e65660443cb0bcb2578649"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 9401.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 9401.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 20.89,
+        "compute_cost_avoided": 46.17,
+        "equivalent_gpus": 0.015,
+        "monthly_value": 23.4,
+        "annual_value": 280.83,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.743,
+        "level": "medium",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 9f35e76f10e65660443cb0bcb2578649 waited 157 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is medium (0.74)."
+      },
+      "review": {
+        "verdict": "REVIEW",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 7.0h | Queue reduction: 157 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 10,
+      "opportunity_id": "30288f8e-c678-4e49-b9e0-ecdc081d62e1",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 857ab5bec992a475e96e0587a2cb0287 waited 154 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "857ab5bec992a475e96e0587a2cb0287",
+      "affected_jobs": [
+        "857ab5bec992a475e96e0587a2cb0287",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-0",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-1",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-2",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-3",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-4",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-5",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-6",
+        "b32b07eb17f75a5403dd7b77d7ad5b70-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 857ab5bec992a475e96e0587a2cb0287 could have started without waiting 154 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "857ab5bec992a475e96e0587a2cb0287",
+          "unblocked_job_ids": [
+            "857ab5bec992a475e96e0587a2cb0287"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 9257.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 9257.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 20.57,
+        "compute_cost_avoided": 45.46,
+        "equivalent_gpus": 0.014,
+        "monthly_value": 23.04,
+        "annual_value": 276.52,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.796,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 857ab5bec992a475e96e0587a2cb0287 waited 154 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 1.3h | Queue reduction: 154 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 11,
+      "opportunity_id": "357e52e8-9479-4608-94d9-5cc56595c4b2",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job f236df712c3963e1b76e884652abb044 waited 140 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "f236df712c3963e1b76e884652abb044",
+      "affected_jobs": [
+        "f236df712c3963e1b76e884652abb044",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "3ab3bc735fe7ce080a831841a9995594-gpu-0",
+        "3ab3bc735fe7ce080a831841a9995594-gpu-1",
+        "3ab3bc735fe7ce080a831841a9995594-gpu-2",
+        "3ab3bc735fe7ce080a831841a9995594-gpu-3",
+        "3ab3bc735fe7ce080a831841a9995594-gpu-4",
+        "3ab3bc735fe7ce080a831841a9995594-gpu-5",
+        "3ab3bc735fe7ce080a831841a9995594-gpu-6",
+        "3ab3bc735fe7ce080a831841a9995594-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, f236df712c3963e1b76e884652abb044 could have started without waiting 140 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "f236df712c3963e1b76e884652abb044",
+          "unblocked_job_ids": [
+            "f236df712c3963e1b76e884652abb044"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 8392.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 8392.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 18.65,
+        "compute_cost_avoided": 41.21,
+        "equivalent_gpus": 0.013,
+        "monthly_value": 20.89,
+        "annual_value": 250.68,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.802,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job f236df712c3963e1b76e884652abb044 waited 140 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 1.1h | Queue reduction: 140 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 12,
+      "opportunity_id": "54451912-cba2-4db0-8b60-2f0889d79d85",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job bdad7a6bb9034c4910f694c0b0462fa7 held 1 GPUs for 18.0h with mean utilization 3.75%.",
+      "severity": 0.625,
+      "job_id": "bdad7a6bb9034c4910f694c0b0462fa7",
+      "affected_jobs": [
+        "bdad7a6bb9034c4910f694c0b0462fa7"
+      ],
+      "affected_gpus": [
+        "b131cc237c1271810f0ed8c2abd78fe0-gpu-0"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by bdad7a6bb9034c4910f694c0b0462fa7.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "b131cc237c1271810f0ed8c2abd78fe0-gpu-0"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.75% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 18.04,
+        "idle_hours_recovered": 10.52,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 18.04,
+        "compute_cost_avoided": 39.87,
+        "equivalent_gpus": 0.013,
+        "monthly_value": 20.21,
+        "annual_value": 242.48,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.794,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.75% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job bdad7a6bb9034c4910f694c0b0462fa7 held 1 GPUs for 18.0h with mean utilization 3.75%. Confidence is high (0.79)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 13,
+      "opportunity_id": "86b03de0-2f50-4f88-9572-d6bb5a244318",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 99a1679073e803a679a7cb9385d9c77f waited 1030 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "99a1679073e803a679a7cb9385d9c77f",
+      "affected_jobs": [
+        "99a1679073e803a679a7cb9385d9c77f",
+        "4f9eadd5c74e28c74bd7238c5625da3f",
+        "c61231c866729b07313156af00251e75",
+        "d534042a67432739533f689a51e0d67e",
+        "db3e8a1b1639c958df3421f90b524a25",
+        "c548410dbda7bd4a9023ecc993ec3454",
+        "6ea4f30cf72d0384dc451df62f369731",
+        "09496aa9789915d4fb5bfb747cf6e97e",
+        "f614c89d4fb26e8d965a6b2468ce02b3",
+        "1e8350493c94561c9400787f35472acd",
+        "c69f8b087eda0cb6fda8d4dd8c9007c2",
+        "60f5da8d9ed5cd57c9075db372d012bf",
+        "832cd8ab0aa61740c5a6febeb95868cc",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "d35a6afeb937d961ee72f46b094f75b5",
+        "227761136591726babd92853a63339f1",
+        "3e9a5a15ac0798e25cd654993b8acd1c",
+        "1944acfd4bebc10f66f826d20b622c01",
+        "d78a41e003b90bae468f82bc0e5ca3e8",
+        "a999f1bf2ba21c7ddd47c08ab3ebf563",
+        "12a6ff608df005a70ea18e7a7eee41c0",
+        "e46c1b7312ab90f306ef5ce8194dd914",
+        "264e9ffba751c8e56bc7e7a1190badea",
+        "aa84abf11d4c372ed9155274c2415cb1",
+        "e00225ccfa967ebbffc3cacf307d76fa",
+        "92633a6d8501074606d1f372667d547e",
+        "a797be0bdea5e00ac9eeac36f88dd036",
+        "5986a45f22257ff358e803c35a572003",
+        "ecc30e3df0b978da12a98944da4c160f",
+        "36d278fff34f9fa24d08aadd665d7ee6",
+        "3cb6a3e85abbcaa17d987d824b74e672",
+        "dab19c759fec289f61fe5ffd8d079cba",
+        "a016c0c22b5a3a614f0927823366630d",
+        "af0f4a7aef55fc7fea24afb78f060838",
+        "0979404460dcf0756ab4e574ff9b6445",
+        "7233a182719543c9bfe1c33b701f10d9",
+        "6e5def8389f8c4b24b212d621f3bffcf",
+        "6b94a852cd21994237068d84ed86242a",
+        "3f25b891d419d08070a30bf3904f6097",
+        "81860508548c54b2fd0c31d9a3ce70b0",
+        "4d206df24514f9a5095c9b4ce9d45d6d",
+        "b84f0cb18fc50427b94ea449222c7b60",
+        "df6b5dd5beb92306e8d812bcf37b6260",
+        "50f06bd3f4b48279b42ffcadee493b29",
+        "15367a7725111fbda0c99d7505f43948",
+        "2acca2a14f724d6948e6ef4071422e9b",
+        "e89dd3ce91e791cbc87961036a1d314e",
+        "a7e1b4471290017903acb6612cb60d84",
+        "b52ea0bc6be192810064d128089de14f",
+        "7a40fbeebdc16c460c824a6cb8dbfea4",
+        "8f4dccec8d44d8500fa5d20d55dfb30d",
+        "1b0d1c1092659a25ff8456996588ceb8",
+        "83631408a601eb4e9ca37d77214a1ffa",
+        "863a46148a37dfd661ef151f2e4c0119",
+        "11d01254d9316aa7041305588abdd041",
+        "23b5529a2f01ffdf1a381e0c9d560331",
+        "05fca87129ec4433a4587f424064e971",
+        "8bbba703c575c04ec37e4392ad356537",
+        "a22f1407ee09fcfad01cf6d6b933d07f",
+        "9e7e3bce6995514224f21a90603a13af"
+      ],
+      "affected_gpus": [
+        "69db2ea5138a833b3f3df3bf54003cfd-gpu-0"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 99a1679073e803a679a7cb9385d9c77f could have started without waiting 1030 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 1,
+          "start_job_id": "99a1679073e803a679a7cb9385d9c77f",
+          "unblocked_job_ids": [
+            "99a1679073e803a679a7cb9385d9c77f"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 61818.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 61818.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 17.17,
+        "compute_cost_avoided": 37.95,
+        "equivalent_gpus": 0.012,
+        "monthly_value": 19.24,
+        "annual_value": 230.83,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.801,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 99a1679073e803a679a7cb9385d9c77f waited 1030 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 1 GPUs | Job duration: 72.0h | Queue reduction: 1030 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 14,
+      "opportunity_id": "7b0501e4-0141-4068-9c35-74772aa4db26",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 258207915e877d903558521fbb9af7fc waited 126 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "258207915e877d903558521fbb9af7fc",
+      "affected_jobs": [
+        "258207915e877d903558521fbb9af7fc",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "af0f4a7aef55fc7fea24afb78f060838"
+      ],
+      "affected_gpus": [
+        "ab9c14b488591e6673d372aeddfa6c82-gpu-0",
+        "ab9c14b488591e6673d372aeddfa6c82-gpu-1",
+        "ab9c14b488591e6673d372aeddfa6c82-gpu-2",
+        "ab9c14b488591e6673d372aeddfa6c82-gpu-3",
+        "ab9c14b488591e6673d372aeddfa6c82-gpu-4",
+        "ab9c14b488591e6673d372aeddfa6c82-gpu-5",
+        "ab9c14b488591e6673d372aeddfa6c82-gpu-6",
+        "ab9c14b488591e6673d372aeddfa6c82-gpu-7"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 258207915e877d903558521fbb9af7fc could have started without waiting 126 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 8,
+          "start_job_id": "258207915e877d903558521fbb9af7fc",
+          "unblocked_job_ids": [
+            "258207915e877d903558521fbb9af7fc"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 7560.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 7560.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 16.8,
+        "compute_cost_avoided": 37.13,
+        "equivalent_gpus": 0.012,
+        "monthly_value": 18.82,
+        "annual_value": 225.83,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.751,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 258207915e877d903558521fbb9af7fc waited 126 minutes. At submit time, 2 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.75)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 8 GPUs | Job duration: 3.8h | Queue reduction: 126 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 15,
+      "opportunity_id": "fd0c84e3-7faa-4e25-aa75-3ed96c4151c2",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job e610347c850faa70adf9d4e22a9932a8 waited 829 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "e610347c850faa70adf9d4e22a9932a8",
+      "affected_jobs": [
+        "e610347c850faa70adf9d4e22a9932a8",
+        "4f9eadd5c74e28c74bd7238c5625da3f",
+        "c61231c866729b07313156af00251e75",
+        "d534042a67432739533f689a51e0d67e",
+        "db3e8a1b1639c958df3421f90b524a25",
+        "c548410dbda7bd4a9023ecc993ec3454",
+        "6ea4f30cf72d0384dc451df62f369731",
+        "09496aa9789915d4fb5bfb747cf6e97e",
+        "f614c89d4fb26e8d965a6b2468ce02b3",
+        "1e8350493c94561c9400787f35472acd",
+        "c69f8b087eda0cb6fda8d4dd8c9007c2",
+        "60f5da8d9ed5cd57c9075db372d012bf",
+        "832cd8ab0aa61740c5a6febeb95868cc",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "d35a6afeb937d961ee72f46b094f75b5",
+        "227761136591726babd92853a63339f1",
+        "3e9a5a15ac0798e25cd654993b8acd1c",
+        "1944acfd4bebc10f66f826d20b622c01",
+        "d78a41e003b90bae468f82bc0e5ca3e8",
+        "a999f1bf2ba21c7ddd47c08ab3ebf563",
+        "12a6ff608df005a70ea18e7a7eee41c0",
+        "e46c1b7312ab90f306ef5ce8194dd914",
+        "264e9ffba751c8e56bc7e7a1190badea",
+        "aa84abf11d4c372ed9155274c2415cb1",
+        "e00225ccfa967ebbffc3cacf307d76fa",
+        "92633a6d8501074606d1f372667d547e",
+        "a797be0bdea5e00ac9eeac36f88dd036",
+        "5986a45f22257ff358e803c35a572003",
+        "ecc30e3df0b978da12a98944da4c160f",
+        "36d278fff34f9fa24d08aadd665d7ee6",
+        "3cb6a3e85abbcaa17d987d824b74e672",
+        "dab19c759fec289f61fe5ffd8d079cba",
+        "a016c0c22b5a3a614f0927823366630d",
+        "af0f4a7aef55fc7fea24afb78f060838",
+        "0979404460dcf0756ab4e574ff9b6445",
+        "7233a182719543c9bfe1c33b701f10d9",
+        "6e5def8389f8c4b24b212d621f3bffcf",
+        "6b94a852cd21994237068d84ed86242a",
+        "3f25b891d419d08070a30bf3904f6097",
+        "81860508548c54b2fd0c31d9a3ce70b0",
+        "4d206df24514f9a5095c9b4ce9d45d6d",
+        "b84f0cb18fc50427b94ea449222c7b60",
+        "df6b5dd5beb92306e8d812bcf37b6260",
+        "50f06bd3f4b48279b42ffcadee493b29",
+        "15367a7725111fbda0c99d7505f43948",
+        "2acca2a14f724d6948e6ef4071422e9b",
+        "e89dd3ce91e791cbc87961036a1d314e",
+        "a7e1b4471290017903acb6612cb60d84",
+        "b52ea0bc6be192810064d128089de14f",
+        "7a40fbeebdc16c460c824a6cb8dbfea4",
+        "8f4dccec8d44d8500fa5d20d55dfb30d",
+        "1b0d1c1092659a25ff8456996588ceb8",
+        "83631408a601eb4e9ca37d77214a1ffa",
+        "863a46148a37dfd661ef151f2e4c0119",
+        "11d01254d9316aa7041305588abdd041",
+        "23b5529a2f01ffdf1a381e0c9d560331",
+        "05fca87129ec4433a4587f424064e971",
+        "8bbba703c575c04ec37e4392ad356537",
+        "a22f1407ee09fcfad01cf6d6b933d07f",
+        "9e7e3bce6995514224f21a90603a13af"
+      ],
+      "affected_gpus": [
+        "c511c011f8752b7e64d72de081bbeda6-gpu-0"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, e610347c850faa70adf9d4e22a9932a8 could have started without waiting 829 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 1,
+          "start_job_id": "e610347c850faa70adf9d4e22a9932a8",
+          "unblocked_job_ids": [
+            "e610347c850faa70adf9d4e22a9932a8"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 49743.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 49743.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 13.82,
+        "compute_cost_avoided": 30.54,
+        "equivalent_gpus": 0.01,
+        "monthly_value": 15.48,
+        "annual_value": 185.74,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.802,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job e610347c850faa70adf9d4e22a9932a8 waited 829 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 1 GPUs | Job duration: 631.9h | Queue reduction: 829 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 16,
+      "opportunity_id": "6342b47b-be05-4e5f-882f-355d22cdec28",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job e887a6fff8c48acbe3a882218cafca29 waited 692 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "e887a6fff8c48acbe3a882218cafca29",
+      "affected_jobs": [
+        "e887a6fff8c48acbe3a882218cafca29",
+        "4f9eadd5c74e28c74bd7238c5625da3f",
+        "c61231c866729b07313156af00251e75",
+        "d534042a67432739533f689a51e0d67e",
+        "db3e8a1b1639c958df3421f90b524a25",
+        "c548410dbda7bd4a9023ecc993ec3454",
+        "6ea4f30cf72d0384dc451df62f369731",
+        "09496aa9789915d4fb5bfb747cf6e97e",
+        "f614c89d4fb26e8d965a6b2468ce02b3",
+        "1e8350493c94561c9400787f35472acd",
+        "c69f8b087eda0cb6fda8d4dd8c9007c2",
+        "60f5da8d9ed5cd57c9075db372d012bf",
+        "832cd8ab0aa61740c5a6febeb95868cc",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "d35a6afeb937d961ee72f46b094f75b5",
+        "227761136591726babd92853a63339f1",
+        "3e9a5a15ac0798e25cd654993b8acd1c",
+        "1944acfd4bebc10f66f826d20b622c01",
+        "d78a41e003b90bae468f82bc0e5ca3e8",
+        "a999f1bf2ba21c7ddd47c08ab3ebf563",
+        "12a6ff608df005a70ea18e7a7eee41c0",
+        "e46c1b7312ab90f306ef5ce8194dd914",
+        "264e9ffba751c8e56bc7e7a1190badea",
+        "aa84abf11d4c372ed9155274c2415cb1",
+        "e00225ccfa967ebbffc3cacf307d76fa",
+        "92633a6d8501074606d1f372667d547e",
+        "a797be0bdea5e00ac9eeac36f88dd036",
+        "5986a45f22257ff358e803c35a572003",
+        "ecc30e3df0b978da12a98944da4c160f",
+        "36d278fff34f9fa24d08aadd665d7ee6",
+        "3cb6a3e85abbcaa17d987d824b74e672",
+        "dab19c759fec289f61fe5ffd8d079cba",
+        "a016c0c22b5a3a614f0927823366630d",
+        "af0f4a7aef55fc7fea24afb78f060838",
+        "0979404460dcf0756ab4e574ff9b6445",
+        "7233a182719543c9bfe1c33b701f10d9",
+        "6e5def8389f8c4b24b212d621f3bffcf",
+        "6b94a852cd21994237068d84ed86242a",
+        "3f25b891d419d08070a30bf3904f6097",
+        "81860508548c54b2fd0c31d9a3ce70b0",
+        "4d206df24514f9a5095c9b4ce9d45d6d",
+        "b84f0cb18fc50427b94ea449222c7b60",
+        "df6b5dd5beb92306e8d812bcf37b6260",
+        "50f06bd3f4b48279b42ffcadee493b29",
+        "15367a7725111fbda0c99d7505f43948",
+        "2acca2a14f724d6948e6ef4071422e9b",
+        "e89dd3ce91e791cbc87961036a1d314e",
+        "a7e1b4471290017903acb6612cb60d84",
+        "b52ea0bc6be192810064d128089de14f",
+        "7a40fbeebdc16c460c824a6cb8dbfea4",
+        "8f4dccec8d44d8500fa5d20d55dfb30d",
+        "1b0d1c1092659a25ff8456996588ceb8",
+        "83631408a601eb4e9ca37d77214a1ffa",
+        "863a46148a37dfd661ef151f2e4c0119",
+        "11d01254d9316aa7041305588abdd041",
+        "23b5529a2f01ffdf1a381e0c9d560331",
+        "05fca87129ec4433a4587f424064e971",
+        "8bbba703c575c04ec37e4392ad356537",
+        "a22f1407ee09fcfad01cf6d6b933d07f",
+        "9e7e3bce6995514224f21a90603a13af"
+      ],
+      "affected_gpus": [
+        "1e5ae2216c60bc4e1892df68f6bd1f0d-gpu-0"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, e887a6fff8c48acbe3a882218cafca29 could have started without waiting 692 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 1,
+          "start_job_id": "e887a6fff8c48acbe3a882218cafca29",
+          "unblocked_job_ids": [
+            "e887a6fff8c48acbe3a882218cafca29"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 41545.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 41545.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 11.54,
+        "compute_cost_avoided": 25.5,
+        "equivalent_gpus": 0.008,
+        "monthly_value": 12.93,
+        "annual_value": 155.13,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.802,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job e887a6fff8c48acbe3a882218cafca29 waited 692 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 1 GPUs | Job duration: 5.8h | Queue reduction: 692 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 17,
+      "opportunity_id": "a42f95d7-7663-4177-b8c3-370eeef9d542",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 016bdeaec84c80f572c8c451d8cd276d waited 619 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "016bdeaec84c80f572c8c451d8cd276d",
+      "affected_jobs": [
+        "016bdeaec84c80f572c8c451d8cd276d",
+        "4f9eadd5c74e28c74bd7238c5625da3f",
+        "c61231c866729b07313156af00251e75",
+        "d534042a67432739533f689a51e0d67e",
+        "db3e8a1b1639c958df3421f90b524a25",
+        "c548410dbda7bd4a9023ecc993ec3454",
+        "6ea4f30cf72d0384dc451df62f369731",
+        "09496aa9789915d4fb5bfb747cf6e97e",
+        "f614c89d4fb26e8d965a6b2468ce02b3",
+        "1e8350493c94561c9400787f35472acd",
+        "c69f8b087eda0cb6fda8d4dd8c9007c2",
+        "60f5da8d9ed5cd57c9075db372d012bf",
+        "832cd8ab0aa61740c5a6febeb95868cc",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "d35a6afeb937d961ee72f46b094f75b5",
+        "227761136591726babd92853a63339f1",
+        "3e9a5a15ac0798e25cd654993b8acd1c",
+        "1944acfd4bebc10f66f826d20b622c01",
+        "d78a41e003b90bae468f82bc0e5ca3e8",
+        "a999f1bf2ba21c7ddd47c08ab3ebf563",
+        "12a6ff608df005a70ea18e7a7eee41c0",
+        "e46c1b7312ab90f306ef5ce8194dd914",
+        "264e9ffba751c8e56bc7e7a1190badea",
+        "aa84abf11d4c372ed9155274c2415cb1",
+        "e00225ccfa967ebbffc3cacf307d76fa",
+        "92633a6d8501074606d1f372667d547e",
+        "a797be0bdea5e00ac9eeac36f88dd036",
+        "5986a45f22257ff358e803c35a572003",
+        "ecc30e3df0b978da12a98944da4c160f",
+        "36d278fff34f9fa24d08aadd665d7ee6",
+        "3cb6a3e85abbcaa17d987d824b74e672",
+        "dab19c759fec289f61fe5ffd8d079cba",
+        "a016c0c22b5a3a614f0927823366630d",
+        "af0f4a7aef55fc7fea24afb78f060838",
+        "0979404460dcf0756ab4e574ff9b6445",
+        "7233a182719543c9bfe1c33b701f10d9",
+        "6e5def8389f8c4b24b212d621f3bffcf",
+        "6b94a852cd21994237068d84ed86242a",
+        "3f25b891d419d08070a30bf3904f6097",
+        "81860508548c54b2fd0c31d9a3ce70b0",
+        "4d206df24514f9a5095c9b4ce9d45d6d",
+        "b84f0cb18fc50427b94ea449222c7b60",
+        "df6b5dd5beb92306e8d812bcf37b6260",
+        "50f06bd3f4b48279b42ffcadee493b29",
+        "15367a7725111fbda0c99d7505f43948",
+        "2acca2a14f724d6948e6ef4071422e9b",
+        "e89dd3ce91e791cbc87961036a1d314e",
+        "a7e1b4471290017903acb6612cb60d84",
+        "b52ea0bc6be192810064d128089de14f",
+        "7a40fbeebdc16c460c824a6cb8dbfea4",
+        "8f4dccec8d44d8500fa5d20d55dfb30d",
+        "1b0d1c1092659a25ff8456996588ceb8",
+        "83631408a601eb4e9ca37d77214a1ffa",
+        "863a46148a37dfd661ef151f2e4c0119",
+        "11d01254d9316aa7041305588abdd041",
+        "23b5529a2f01ffdf1a381e0c9d560331",
+        "05fca87129ec4433a4587f424064e971",
+        "8bbba703c575c04ec37e4392ad356537",
+        "a22f1407ee09fcfad01cf6d6b933d07f",
+        "9e7e3bce6995514224f21a90603a13af"
+      ],
+      "affected_gpus": [
+        "f52af85c50dc86dab970e1661e130850-gpu-0"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 016bdeaec84c80f572c8c451d8cd276d could have started without waiting 619 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 1,
+          "start_job_id": "016bdeaec84c80f572c8c451d8cd276d",
+          "unblocked_job_ids": [
+            "016bdeaec84c80f572c8c451d8cd276d"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 37136.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 37136.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 10.32,
+        "compute_cost_avoided": 22.8,
+        "equivalent_gpus": 0.007,
+        "monthly_value": 11.56,
+        "annual_value": 138.67,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.802,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 016bdeaec84c80f572c8c451d8cd276d waited 619 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 1 GPUs | Job duration: 0.5h | Queue reduction: 619 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 18,
+      "opportunity_id": "d22df111-f0f1-4a15-86e5-3e5b190e7249",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job 1a7862383c7434433945ab525bbc6756 waited 285 minutes. At submit time, 12 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "1a7862383c7434433945ab525bbc6756",
+      "affected_jobs": [
+        "1a7862383c7434433945ab525bbc6756",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "d35a6afeb937d961ee72f46b094f75b5",
+        "227761136591726babd92853a63339f1",
+        "92633a6d8501074606d1f372667d547e",
+        "ecc30e3df0b978da12a98944da4c160f",
+        "dab19c759fec289f61fe5ffd8d079cba",
+        "af0f4a7aef55fc7fea24afb78f060838",
+        "7233a182719543c9bfe1c33b701f10d9",
+        "1b0d1c1092659a25ff8456996588ceb8",
+        "83631408a601eb4e9ca37d77214a1ffa",
+        "23b5529a2f01ffdf1a381e0c9d560331",
+        "a22f1407ee09fcfad01cf6d6b933d07f"
+      ],
+      "affected_gpus": [
+        "ced7f44360536b34d7199da0b50ede17-gpu-0",
+        "ced7f44360536b34d7199da0b50ede17-gpu-1"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, 1a7862383c7434433945ab525bbc6756 could have started without waiting 285 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 2,
+          "start_job_id": "1a7862383c7434433945ab525bbc6756",
+          "unblocked_job_ids": [
+            "1a7862383c7434433945ab525bbc6756"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 17124.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 17124.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 9.51,
+        "compute_cost_avoided": 21.02,
+        "equivalent_gpus": 0.007,
+        "monthly_value": 10.66,
+        "annual_value": 127.88,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.8,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job 1a7862383c7434433945ab525bbc6756 waited 285 minutes. At submit time, 12 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 2 GPUs | Job duration: 0.2h | Queue reduction: 285 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 19,
+      "opportunity_id": "44a7d0db-4ee6-4723-ac69-126ab5267e19",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job d64631b7c5aaf1c5a4eb4fa94726a5ee waited 524 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "d64631b7c5aaf1c5a4eb4fa94726a5ee",
+      "affected_jobs": [
+        "d64631b7c5aaf1c5a4eb4fa94726a5ee",
+        "4f9eadd5c74e28c74bd7238c5625da3f",
+        "72e1475d64d60dc12d7e641fb18bc4ce",
+        "c61231c866729b07313156af00251e75",
+        "d534042a67432739533f689a51e0d67e",
+        "db3e8a1b1639c958df3421f90b524a25",
+        "c548410dbda7bd4a9023ecc993ec3454",
+        "6ea4f30cf72d0384dc451df62f369731",
+        "09496aa9789915d4fb5bfb747cf6e97e",
+        "f614c89d4fb26e8d965a6b2468ce02b3",
+        "1e8350493c94561c9400787f35472acd",
+        "c69f8b087eda0cb6fda8d4dd8c9007c2",
+        "60f5da8d9ed5cd57c9075db372d012bf",
+        "832cd8ab0aa61740c5a6febeb95868cc",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "d35a6afeb937d961ee72f46b094f75b5",
+        "227761136591726babd92853a63339f1",
+        "3e9a5a15ac0798e25cd654993b8acd1c",
+        "d78a41e003b90bae468f82bc0e5ca3e8",
+        "a999f1bf2ba21c7ddd47c08ab3ebf563",
+        "12a6ff608df005a70ea18e7a7eee41c0",
+        "e46c1b7312ab90f306ef5ce8194dd914",
+        "264e9ffba751c8e56bc7e7a1190badea",
+        "aa84abf11d4c372ed9155274c2415cb1",
+        "e00225ccfa967ebbffc3cacf307d76fa",
+        "92633a6d8501074606d1f372667d547e",
+        "a797be0bdea5e00ac9eeac36f88dd036",
+        "5986a45f22257ff358e803c35a572003",
+        "ecc30e3df0b978da12a98944da4c160f",
+        "36d278fff34f9fa24d08aadd665d7ee6",
+        "3cb6a3e85abbcaa17d987d824b74e672",
+        "dab19c759fec289f61fe5ffd8d079cba",
+        "a016c0c22b5a3a614f0927823366630d",
+        "af0f4a7aef55fc7fea24afb78f060838",
+        "0979404460dcf0756ab4e574ff9b6445",
+        "7233a182719543c9bfe1c33b701f10d9",
+        "6e5def8389f8c4b24b212d621f3bffcf",
+        "6b94a852cd21994237068d84ed86242a",
+        "3f25b891d419d08070a30bf3904f6097",
+        "81860508548c54b2fd0c31d9a3ce70b0",
+        "4d206df24514f9a5095c9b4ce9d45d6d",
+        "b84f0cb18fc50427b94ea449222c7b60",
+        "df6b5dd5beb92306e8d812bcf37b6260",
+        "50f06bd3f4b48279b42ffcadee493b29",
+        "15367a7725111fbda0c99d7505f43948",
+        "2acca2a14f724d6948e6ef4071422e9b",
+        "e89dd3ce91e791cbc87961036a1d314e",
+        "a7e1b4471290017903acb6612cb60d84",
+        "b52ea0bc6be192810064d128089de14f",
+        "7a40fbeebdc16c460c824a6cb8dbfea4",
+        "8f4dccec8d44d8500fa5d20d55dfb30d",
+        "1b0d1c1092659a25ff8456996588ceb8",
+        "83631408a601eb4e9ca37d77214a1ffa",
+        "863a46148a37dfd661ef151f2e4c0119",
+        "11d01254d9316aa7041305588abdd041",
+        "23b5529a2f01ffdf1a381e0c9d560331",
+        "05fca87129ec4433a4587f424064e971",
+        "8bbba703c575c04ec37e4392ad356537",
+        "a22f1407ee09fcfad01cf6d6b933d07f",
+        "9e7e3bce6995514224f21a90603a13af"
+      ],
+      "affected_gpus": [
+        "add8c8aa6c8c3efc66d31ea16fb88adf-gpu-0"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, d64631b7c5aaf1c5a4eb4fa94726a5ee could have started without waiting 524 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 1,
+          "start_job_id": "d64631b7c5aaf1c5a4eb4fa94726a5ee",
+          "unblocked_job_ids": [
+            "d64631b7c5aaf1c5a4eb4fa94726a5ee"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 31453.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 31453.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 8.74,
+        "compute_cost_avoided": 19.31,
+        "equivalent_gpus": 0.006,
+        "monthly_value": 9.79,
+        "annual_value": 117.45,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.801,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job d64631b7c5aaf1c5a4eb4fa94726a5ee waited 524 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 1 GPUs | Job duration: 7.7h | Queue reduction: 524 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 20,
+      "opportunity_id": "50d3acd1-1172-4a47-85fc-d5e8ef43172c",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job d0eae8f3718a25ba2c321caf06beca6d waited 465 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "d0eae8f3718a25ba2c321caf06beca6d",
+      "affected_jobs": [
+        "d0eae8f3718a25ba2c321caf06beca6d",
+        "4f9eadd5c74e28c74bd7238c5625da3f",
+        "72e1475d64d60dc12d7e641fb18bc4ce",
+        "c61231c866729b07313156af00251e75",
+        "d534042a67432739533f689a51e0d67e",
+        "db3e8a1b1639c958df3421f90b524a25",
+        "c548410dbda7bd4a9023ecc993ec3454",
+        "6ea4f30cf72d0384dc451df62f369731",
+        "09496aa9789915d4fb5bfb747cf6e97e",
+        "f614c89d4fb26e8d965a6b2468ce02b3",
+        "1e8350493c94561c9400787f35472acd",
+        "c69f8b087eda0cb6fda8d4dd8c9007c2",
+        "60f5da8d9ed5cd57c9075db372d012bf",
+        "832cd8ab0aa61740c5a6febeb95868cc",
+        "5020dfc6d49b4b04ac218c5274713bff",
+        "d35a6afeb937d961ee72f46b094f75b5",
+        "227761136591726babd92853a63339f1",
+        "3e9a5a15ac0798e25cd654993b8acd1c",
+        "d78a41e003b90bae468f82bc0e5ca3e8",
+        "a999f1bf2ba21c7ddd47c08ab3ebf563",
+        "12a6ff608df005a70ea18e7a7eee41c0",
+        "e46c1b7312ab90f306ef5ce8194dd914",
+        "264e9ffba751c8e56bc7e7a1190badea",
+        "aa84abf11d4c372ed9155274c2415cb1",
+        "e00225ccfa967ebbffc3cacf307d76fa",
+        "92633a6d8501074606d1f372667d547e",
+        "a797be0bdea5e00ac9eeac36f88dd036",
+        "5986a45f22257ff358e803c35a572003",
+        "ecc30e3df0b978da12a98944da4c160f",
+        "36d278fff34f9fa24d08aadd665d7ee6",
+        "3cb6a3e85abbcaa17d987d824b74e672",
+        "dab19c759fec289f61fe5ffd8d079cba",
+        "a016c0c22b5a3a614f0927823366630d",
+        "af0f4a7aef55fc7fea24afb78f060838",
+        "0979404460dcf0756ab4e574ff9b6445",
+        "7233a182719543c9bfe1c33b701f10d9",
+        "6e5def8389f8c4b24b212d621f3bffcf",
+        "6b94a852cd21994237068d84ed86242a",
+        "3f25b891d419d08070a30bf3904f6097",
+        "81860508548c54b2fd0c31d9a3ce70b0",
+        "4d206df24514f9a5095c9b4ce9d45d6d",
+        "b84f0cb18fc50427b94ea449222c7b60",
+        "df6b5dd5beb92306e8d812bcf37b6260",
+        "50f06bd3f4b48279b42ffcadee493b29",
+        "15367a7725111fbda0c99d7505f43948",
+        "2acca2a14f724d6948e6ef4071422e9b",
+        "e89dd3ce91e791cbc87961036a1d314e",
+        "a7e1b4471290017903acb6612cb60d84",
+        "b52ea0bc6be192810064d128089de14f",
+        "7a40fbeebdc16c460c824a6cb8dbfea4",
+        "8f4dccec8d44d8500fa5d20d55dfb30d",
+        "1b0d1c1092659a25ff8456996588ceb8",
+        "83631408a601eb4e9ca37d77214a1ffa",
+        "863a46148a37dfd661ef151f2e4c0119",
+        "11d01254d9316aa7041305588abdd041",
+        "23b5529a2f01ffdf1a381e0c9d560331",
+        "05fca87129ec4433a4587f424064e971",
+        "8bbba703c575c04ec37e4392ad356537",
+        "a22f1407ee09fcfad01cf6d6b933d07f",
+        "9e7e3bce6995514224f21a90603a13af"
+      ],
+      "affected_gpus": [
+        "3fc99ecd9dc3bbd245f4c3a3c742bed8-gpu-0"
+      ],
+      "alternative": {
+        "description": "If 5020dfc6d49b4b04ac218c5274713bff had held 0 GPUs instead of 8, d0eae8f3718a25ba2c321caf06beca6d could have started without waiting 465 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 1,
+          "start_job_id": "d0eae8f3718a25ba2c321caf06beca6d",
+          "unblocked_job_ids": [
+            "d0eae8f3718a25ba2c321caf06beca6d"
+          ],
+          "release_from_job_id": "5020dfc6d49b4b04ac218c5274713bff",
+          "queue_time_reduction_seconds": 27883.0,
+          "original_gpu_count": 8
+        },
+        "rationale": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 27883.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 7.75,
+        "compute_cost_avoided": 17.12,
+        "equivalent_gpus": 0.005,
+        "monthly_value": 8.68,
+        "annual_value": 104.11,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 1420.5 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.801,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "5020dfc6d49b4b04ac218c5274713bff held 8 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job d0eae8f3718a25ba2c321caf06beca6d waited 465 minutes. At submit time, 59 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.80)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 8 -> 1 GPUs | Job duration: 0.1h | Queue reduction: 465 min | Blocked by: 5020dfc6d49b4b04ac218c5274713bff",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    }
+  ]
+}

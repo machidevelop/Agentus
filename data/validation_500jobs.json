@@ -1,0 +1,1662 @@
+{
+  "generated_at": "2026-08-29T15:52:36.748925+00:00",
+  "summary": {
+    "total_findings": 39,
+    "recovery_pct": 37.69,
+    "total_gpu_hours_recovered": 9609.0,
+    "total_idle_hours_recovered": 6355.0,
+    "total_monthly_value": 3504.13,
+    "avg_confidence": 0.848,
+    "high_confidence_count": 39,
+    "findings_by_type": {
+      "idle_allocation": 34,
+      "queue_inefficiency": 4,
+      "poor_placement": 1
+    }
+  },
+  "top_findings": [
+    {
+      "rank": 1,
+      "opportunity_id": "38e4f0cc-2be1-4d00-b92c-aa5873e73867",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0004 held 1 GPUs for 2818.0h with mean utilization 3.30%.",
+      "severity": 0.67,
+      "job_id": "openb-pod-0004",
+      "affected_jobs": [
+        "openb-pod-0004"
+      ],
+      "affected_gpus": [
+        "openb-node-0022-gpu-4"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0004.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0022-gpu-4"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.30% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 2818.02,
+        "idle_hours_recovered": 1878.68,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 2818.02,
+        "compute_cost_avoided": 6227.83,
+        "equivalent_gpus": 0.786,
+        "monthly_value": 1251.07,
+        "annual_value": 15012.86,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.853,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.30% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0004 held 1 GPUs for 2818.0h with mean utilization 3.30%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 2,
+      "opportunity_id": "a8379423-7467-4cbd-8f94-9892a793c842",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0007 held 1 GPUs for 2745.3h with mean utilization 3.13%.",
+      "severity": 0.687,
+      "job_id": "openb-pod-0007",
+      "affected_jobs": [
+        "openb-pod-0007"
+      ],
+      "affected_gpus": [
+        "openb-node-0022-gpu-6"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0007.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0022-gpu-6"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.13% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 2745.29,
+        "idle_hours_recovered": 1773.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 2745.29,
+        "compute_cost_avoided": 6067.08,
+        "equivalent_gpus": 0.766,
+        "monthly_value": 1218.78,
+        "annual_value": 14625.36,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.854,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.13% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0007 held 1 GPUs for 2745.3h with mean utilization 3.13%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 3,
+      "opportunity_id": "889b10f9-c3c1-47f3-bb4c-5d339293297c",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0020 held 1 GPUs for 899.7h with mean utilization 2.81%.",
+      "severity": 0.719,
+      "job_id": "openb-pod-0020",
+      "affected_jobs": [
+        "openb-pod-0020"
+      ],
+      "affected_gpus": [
+        "openb-node-0026-gpu-1"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0020.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0026-gpu-1"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 2.81% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 899.68,
+        "idle_hours_recovered": 618.53,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 1.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 899.68,
+        "compute_cost_avoided": 1619.42,
+        "equivalent_gpus": 0.251,
+        "monthly_value": 325.32,
+        "annual_value": 3903.78,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.854,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 2.81% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0020 held 1 GPUs for 899.7h with mean utilization 2.81%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 4,
+      "opportunity_id": "395a3133-8a4d-4601-8acf-41647a93a92c",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0015 held 1 GPUs for 1251.8h with mean utilization 3.78%.",
+      "severity": 0.622,
+      "job_id": "openb-pod-0015",
+      "affected_jobs": [
+        "openb-pod-0015"
+      ],
+      "affected_gpus": [
+        "openb-node-0023-gpu-6"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0015.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0023-gpu-6"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.78% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 1251.85,
+        "idle_hours_recovered": 782.4,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 3.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 1251.85,
+        "compute_cost_avoided": 1377.03,
+        "equivalent_gpus": 0.349,
+        "monthly_value": 276.62,
+        "annual_value": 3319.49,
+        "gpu_type": "V100-32GB",
+        "assumptions": [
+          "GPU type priced as V100-32GB at $1.10 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.852,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.78% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0015 held 1 GPUs for 1251.8h with mean utilization 3.78%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 5,
+      "opportunity_id": "2a7e4ce9-649c-49ec-a53c-42383b5e1546",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0018 held 1 GPUs for 951.7h with mean utilization 2.66%.",
+      "severity": 0.734,
+      "job_id": "openb-pod-0018",
+      "affected_jobs": [
+        "openb-pod-0018"
+      ],
+      "affected_gpus": [
+        "openb-node-0024-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0018.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0024-gpu-7"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 2.66% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 951.66,
+        "idle_hours_recovered": 713.75,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 951.66,
+        "compute_cost_avoided": 1046.83,
+        "equivalent_gpus": 0.266,
+        "monthly_value": 210.29,
+        "annual_value": 2523.5,
+        "gpu_type": "V100-32GB",
+        "assumptions": [
+          "GPU type priced as V100-32GB at $1.10 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.856,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 2.66% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0018 held 1 GPUs for 951.7h with mean utilization 2.66%. Confidence is high (0.86)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 6,
+      "opportunity_id": "f61b3387-8631-476d-9267-4bd12f6b8208",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0014 held 1 GPUs for 839.9h with mean utilization 3.93%.",
+      "severity": 0.607,
+      "job_id": "openb-pod-0014",
+      "affected_jobs": [
+        "openb-pod-0014"
+      ],
+      "affected_gpus": [
+        "openb-node-0023-gpu-5"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0014.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0023-gpu-5"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.93% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 839.89,
+        "idle_hours_recovered": 524.93,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 34.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 839.89,
+        "compute_cost_avoided": 923.88,
+        "equivalent_gpus": 0.234,
+        "monthly_value": 185.59,
+        "annual_value": 2227.11,
+        "gpu_type": "V100-32GB",
+        "assumptions": [
+          "GPU type priced as V100-32GB at $1.10 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.852,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.93% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0014 held 1 GPUs for 839.9h with mean utilization 3.93%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 7,
+      "opportunity_id": "3a504cc1-4bd6-4e96-a949-5906d626429c",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0274 held 1 GPUs for 28.3h with mean utilization 3.42%.",
+      "severity": 0.658,
+      "job_id": "openb-pod-0274",
+      "affected_jobs": [
+        "openb-pod-0274"
+      ],
+      "affected_gpus": [
+        "openb-node-0027-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0274.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0027-gpu-7"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.42% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 28.26,
+        "idle_hours_recovered": 18.84,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 68.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 28.26,
+        "compute_cost_avoided": 50.88,
+        "equivalent_gpus": 0.008,
+        "monthly_value": 10.22,
+        "annual_value": 122.64,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.854,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.42% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0274 held 1 GPUs for 28.3h with mean utilization 3.42%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 8,
+      "opportunity_id": "48f2ee84-003d-4e8d-8f17-4be739ebff07",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0188 held 1 GPUs for 19.3h with mean utilization 4.24%.",
+      "severity": 0.576,
+      "job_id": "openb-pod-0188",
+      "affected_jobs": [
+        "openb-pod-0188"
+      ],
+      "affected_gpus": [
+        "openb-node-0027-gpu-0"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0188.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0027-gpu-0"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 4.24% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 19.25,
+        "idle_hours_recovered": 10.83,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 19.25,
+        "compute_cost_avoided": 34.66,
+        "equivalent_gpus": 0.005,
+        "monthly_value": 6.96,
+        "annual_value": 83.54,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.852,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 4.24% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0188 held 1 GPUs for 19.3h with mean utilization 4.24%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 9,
+      "opportunity_id": "f0b90ee3-5667-42ec-9be0-66411d40cd12",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0249 held 1 GPUs for 11.3h with mean utilization 4.24%.",
+      "severity": 0.576,
+      "job_id": "openb-pod-0249",
+      "affected_jobs": [
+        "openb-pod-0249"
+      ],
+      "affected_gpus": [
+        "openb-node-0027-gpu-4"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0249.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0027-gpu-4"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 4.24% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 11.26,
+        "idle_hours_recovered": 6.33,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 2.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 11.26,
+        "compute_cost_avoided": 20.26,
+        "equivalent_gpus": 0.003,
+        "monthly_value": 4.07,
+        "annual_value": 48.84,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.852,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 4.24% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0249 held 1 GPUs for 11.3h with mean utilization 4.24%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 10,
+      "opportunity_id": "dd6d3c42-451b-4cb9-9453-f2dc9c565da1",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0388 held 1 GPUs for 7.4h with mean utilization 3.68%.",
+      "severity": 0.632,
+      "job_id": "openb-pod-0388",
+      "affected_jobs": [
+        "openb-pod-0388"
+      ],
+      "affected_gpus": [
+        "openb-node-0026-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0388.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0026-gpu-7"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.68% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 7.42,
+        "idle_hours_recovered": 4.38,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 7.42,
+        "compute_cost_avoided": 13.35,
+        "equivalent_gpus": 0.002,
+        "monthly_value": 2.68,
+        "annual_value": 32.18,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.853,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.68% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0388 held 1 GPUs for 7.4h with mean utilization 3.68%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 11,
+      "opportunity_id": "4b69205a-b294-459d-8e9f-2906af14deee",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0144 held 1 GPUs for 5.4h with mean utilization 3.06%.",
+      "severity": 0.694,
+      "job_id": "openb-pod-0144",
+      "affected_jobs": [
+        "openb-pod-0144"
+      ],
+      "affected_gpus": [
+        "openb-node-0027-gpu-4"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0144.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0027-gpu-4"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.06% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 5.36,
+        "idle_hours_recovered": 3.69,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 5.36,
+        "compute_cost_avoided": 9.65,
+        "equivalent_gpus": 0.001,
+        "monthly_value": 1.94,
+        "annual_value": 23.26,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.855,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.06% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0144 held 1 GPUs for 5.4h with mean utilization 3.06%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 12,
+      "opportunity_id": "a4aca75c-3d84-4dca-b871-c099b0f89de2",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0337 held 1 GPUs for 4.4h with mean utilization 4.04%.",
+      "severity": 0.596,
+      "job_id": "openb-pod-0337",
+      "affected_jobs": [
+        "openb-pod-0337"
+      ],
+      "affected_gpus": [
+        "openb-node-0027-gpu-0"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0337.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0027-gpu-0"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 4.04% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 4.37,
+        "idle_hours_recovered": 2.35,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 1.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 4.37,
+        "compute_cost_avoided": 7.86,
+        "equivalent_gpus": 0.001,
+        "monthly_value": 1.58,
+        "annual_value": 18.95,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.853,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 4.04% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0337 held 1 GPUs for 4.4h with mean utilization 4.04%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 13,
+      "opportunity_id": "2c6108f4-3119-4052-a70d-ae267c3adfb6",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0333 held 1 GPUs for 6.2h with mean utilization 4.07%.",
+      "severity": 0.593,
+      "job_id": "openb-pod-0333",
+      "affected_jobs": [
+        "openb-pod-0333"
+      ],
+      "affected_gpus": [
+        "openb-node-0023-gpu-1"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0333.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0023-gpu-1"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 4.07% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 6.18,
+        "idle_hours_recovered": 3.68,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 6.18,
+        "compute_cost_avoided": 6.8,
+        "equivalent_gpus": 0.002,
+        "monthly_value": 1.37,
+        "annual_value": 16.4,
+        "gpu_type": "V100-32GB",
+        "assumptions": [
+          "GPU type priced as V100-32GB at $1.10 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.852,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 4.07% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0333 held 1 GPUs for 6.2h with mean utilization 4.07%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 14,
+      "opportunity_id": "0a05a65c-0f86-4dc5-9028-2bd7294e8a77",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0389 held 1 GPUs for 2.5h with mean utilization 3.57%.",
+      "severity": 0.643,
+      "job_id": "openb-pod-0389",
+      "affected_jobs": [
+        "openb-pod-0389"
+      ],
+      "affected_gpus": [
+        "openb-node-0029-gpu-2"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0389.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0029-gpu-2"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.57% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 2.5,
+        "idle_hours_recovered": 1.61,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 34.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 2.5,
+        "compute_cost_avoided": 4.5,
+        "equivalent_gpus": 0.001,
+        "monthly_value": 0.9,
+        "annual_value": 10.85,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.853,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.57% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0389 held 1 GPUs for 2.5h with mean utilization 3.57%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 15,
+      "opportunity_id": "79ff65fd-0e7a-4180-9e07-ecdc09b23468",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0351 held 1 GPUs for 2.0h with mean utilization 3.55%.",
+      "severity": 0.645,
+      "job_id": "openb-pod-0351",
+      "affected_jobs": [
+        "openb-pod-0351"
+      ],
+      "affected_gpus": [
+        "openb-node-0029-gpu-0"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0351.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0029-gpu-0"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.55% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 1.97,
+        "idle_hours_recovered": 1.25,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 1.97,
+        "compute_cost_avoided": 3.54,
+        "equivalent_gpus": 0.001,
+        "monthly_value": 0.71,
+        "annual_value": 8.53,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.851,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.55% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0351 held 1 GPUs for 2.0h with mean utilization 3.55%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 16,
+      "opportunity_id": "03d468c3-fa3b-45f2-85c2-7afb4accdce4",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0463 held 1 GPUs for 1.8h with mean utilization 2.75%.",
+      "severity": 0.725,
+      "job_id": "openb-pod-0463",
+      "affected_jobs": [
+        "openb-pod-0463"
+      ],
+      "affected_gpus": [
+        "openb-node-0027-gpu-3"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0463.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0027-gpu-3"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 2.75% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 1.79,
+        "idle_hours_recovered": 1.25,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 71.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 1.79,
+        "compute_cost_avoided": 3.22,
+        "equivalent_gpus": 0.0,
+        "monthly_value": 0.65,
+        "annual_value": 7.77,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.853,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 2.75% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0463 held 1 GPUs for 1.8h with mean utilization 2.75%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 17,
+      "opportunity_id": "2615eebf-b6cf-4fda-899d-e403b4601d1f",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0279 held 1 GPUs for 2.8h with mean utilization 4.22%.",
+      "severity": 0.578,
+      "job_id": "openb-pod-0279",
+      "affected_jobs": [
+        "openb-pod-0279"
+      ],
+      "affected_gpus": [
+        "openb-node-0023-gpu-1"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0279.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0023-gpu-1"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 4.22% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 2.83,
+        "idle_hours_recovered": 1.59,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 1.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 2.83,
+        "compute_cost_avoided": 3.11,
+        "equivalent_gpus": 0.001,
+        "monthly_value": 0.63,
+        "annual_value": 7.51,
+        "gpu_type": "V100-32GB",
+        "assumptions": [
+          "GPU type priced as V100-32GB at $1.10 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.852,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 4.22% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0279 held 1 GPUs for 2.8h with mean utilization 4.22%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 18,
+      "opportunity_id": "e55c4f02-dff5-452c-9fbf-ba966d4089b3",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0378 held 1 GPUs for 1.4h with mean utilization 3.75%.",
+      "severity": 0.625,
+      "job_id": "openb-pod-0378",
+      "affected_jobs": [
+        "openb-pod-0378"
+      ],
+      "affected_gpus": [
+        "openb-node-0029-gpu-0"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0378.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0029-gpu-0"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.75% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 1.45,
+        "idle_hours_recovered": 0.9,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 34.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 1.45,
+        "compute_cost_avoided": 2.6,
+        "equivalent_gpus": 0.0,
+        "monthly_value": 0.52,
+        "annual_value": 6.28,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.852,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.75% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0378 held 1 GPUs for 1.4h with mean utilization 3.75%. Confidence is high (0.85)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 19,
+      "opportunity_id": "5d91ce91-f884-4769-91b2-15837f64f197",
+      "type": "queue_inefficiency",
+      "title": "Queue wait with unused capacity",
+      "description": "Job openb-pod-0012 waited 122 minutes. At submit time, 6 running job(s) held unused GPUs that could have covered the request.",
+      "severity": 1.0,
+      "job_id": "openb-pod-0012",
+      "affected_jobs": [
+        "openb-pod-0012",
+        "openb-pod-0008",
+        "openb-pod-0007",
+        "openb-pod-0009",
+        "openb-pod-0011",
+        "openb-pod-0004",
+        "openb-pod-0002"
+      ],
+      "affected_gpus": [
+        "openb-node-0023-gpu-3"
+      ],
+      "alternative": {
+        "description": "If openb-pod-0008 had held 0 GPUs instead of 1, openb-pod-0012 could have started without waiting 122 minutes.",
+        "proposed_action": {
+          "kind": "reorder",
+          "gpu_count": 1,
+          "start_job_id": "openb-pod-0012",
+          "unblocked_job_ids": [
+            "openb-pod-0012"
+          ],
+          "release_from_job_id": "openb-pod-0008",
+          "queue_time_reduction_seconds": 7338.0,
+          "original_gpu_count": 1
+        },
+        "rationale": "openb-pod-0008 held 1 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation.",
+        "generation_method": "agent:gpu_allocation+probe_unblocked_queue:blocker",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 0.0,
+        "idle_hours_recovered": 0.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 7338.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 2.04,
+        "compute_cost_avoided": 2.24,
+        "equivalent_gpus": 0.001,
+        "monthly_value": 0.45,
+        "annual_value": 5.4,
+        "gpu_type": "V100-32GB",
+        "assumptions": [
+          "GPU type priced as V100-32GB at $1.10 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.783,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "queued_job_exists"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "openb-pod-0008 held 1 unused GPUs while higher-value work waited. This is a counterfactual on the observed hold, not a queue-policy recommendation. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0012 waited 122 minutes. At submit time, 6 running job(s) held unused GPUs that could have covered the request. Confidence is high (0.78)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Resize: 1 -> 1 GPUs | Job duration: 1212.1h | Queue reduction: 122 min | Blocked by: openb-pod-0008",
+        "constraints_summary": "gpu_identity, node_identity, queued_job_exists",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 20,
+      "opportunity_id": "0c1704ee-29ce-43ea-875c-0c9f1cf3f204",
+      "type": "idle_allocation",
+      "title": "Idle GPU allocation",
+      "description": "Job openb-pod-0180 held 1 GPUs for 1.0h with mean utilization 3.67%.",
+      "severity": 0.633,
+      "job_id": "openb-pod-0180",
+      "affected_jobs": [
+        "openb-pod-0180"
+      ],
+      "affected_gpus": [
+        "openb-node-0027-gpu-5"
+      ],
+      "alternative": {
+        "description": "Release 1 idle GPUs held by openb-pod-0180.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "openb-node-0027-gpu-5"
+          ],
+          "original_gpu_count": 1
+        },
+        "rationale": "Mean utilization 3.67% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 1.03,
+        "idle_hours_recovered": 0.52,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 3.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 1.03,
+        "compute_cost_avoided": 1.86,
+        "equivalent_gpus": 0.0,
+        "monthly_value": 0.37,
+        "annual_value": 4.48,
+        "gpu_type": "A100-40GB",
+        "assumptions": [
+          "GPU type priced as A100-40GB at $1.80 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 3584.2 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.857,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 3.67% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job openb-pod-0180 held 1 GPUs for 1.0h with mean utilization 3.67%. Confidence is high (0.86)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 1 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    }
+  ]
+}

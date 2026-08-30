@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-08-29T15:55:48.711689+00:00",
+  "summary": {
+    "total_findings": 0,
+    "recovery_pct": 0.0,
+    "total_gpu_hours_recovered": 0.0,
+    "total_idle_hours_recovered": 0.0,
+    "total_monthly_value": 0.0,
+    "avg_confidence": 0.0,
+    "high_confidence_count": 0,
+    "findings_by_type": {}
+  },
+  "top_findings": []
+}

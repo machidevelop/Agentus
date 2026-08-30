@@ -24,6 +24,48 @@ class GPUType(BaseModel):
 
 
 GPU_TYPE_CATALOG: dict[str, GPUType] = {
+    "P100-16GB": GPUType(
+        name="P100-16GB",
+        memory_gb=16.0,
+        tdp_watts=250.0,
+        compute_capability="6.0",
+        fp16_tflops=18.7,
+    ),
+    "V100-16GB": GPUType(
+        name="V100-16GB",
+        memory_gb=16.0,
+        tdp_watts=300.0,
+        compute_capability="7.0",
+        fp16_tflops=125.0,
+    ),
+    "V100-32GB": GPUType(
+        name="V100-32GB",
+        memory_gb=32.0,
+        tdp_watts=300.0,
+        compute_capability="7.0",
+        fp16_tflops=125.0,
+    ),
+    "T4-16GB": GPUType(
+        name="T4-16GB",
+        memory_gb=16.0,
+        tdp_watts=70.0,
+        compute_capability="7.5",
+        fp16_tflops=65.0,
+    ),
+    "A10-24GB": GPUType(
+        name="A10-24GB",
+        memory_gb=24.0,
+        tdp_watts=150.0,
+        compute_capability="8.6",
+        fp16_tflops=125.0,
+    ),
+    "A100-40GB": GPUType(
+        name="A100-40GB",
+        memory_gb=40.0,
+        tdp_watts=400.0,
+        compute_capability="8.0",
+        fp16_tflops=312.0,
+    ),
     "A100-80GB": GPUType(
         name="A100-80GB",
         memory_gb=80.0,
@@ -52,7 +94,89 @@ GPU_TYPE_CATALOG: dict[str, GPUType] = {
         compute_capability="10.0",
         fp16_tflops=2250.0,
     ),
+    "A30-24GB": GPUType(
+        name="A30-24GB",
+        memory_gb=24.0,
+        tdp_watts=165.0,
+        compute_capability="8.0",
+        fp16_tflops=165.0,
+    ),
+    "A800-80GB": GPUType(
+        name="A800-80GB",
+        memory_gb=80.0,
+        tdp_watts=400.0,
+        compute_capability="8.0",
+        fp16_tflops=312.0,
+    ),
+    "H800-80GB": GPUType(
+        name="H800-80GB",
+        memory_gb=80.0,
+        tdp_watts=700.0,
+        compute_capability="9.0",
+        fp16_tflops=989.0,
+    ),
+    "H20-96GB": GPUType(
+        name="H20-96GB",
+        memory_gb=96.0,
+        tdp_watts=500.0,
+        compute_capability="9.0",
+        fp16_tflops=296.0,
+    ),
+    "H20-141GB": GPUType(
+        name="H20-141GB",
+        memory_gb=141.0,
+        tdp_watts=500.0,
+        compute_capability="9.0",
+        fp16_tflops=296.0,
+    ),
+    "L20-48GB": GPUType(
+        name="L20-48GB",
+        memory_gb=48.0,
+        tdp_watts=275.0,
+        compute_capability="8.9",
+        fp16_tflops=239.0,
+    ),
 }
+
+ALIBABA_GPU_ALIASES: dict[str, str] = {
+    "T4": "T4-16GB",
+    "V100": "V100-32GB",
+    "V100S": "V100-32GB",
+    "P100": "P100-16GB",
+    "A10": "A10-24GB",
+    "A100": "A100-80GB",
+    "A100-40G": "A100-40GB",
+    "A100-80G": "A100-80GB",
+    "H100": "H100-80GB",
+    "H200": "H200-141GB",
+    "MISC": "T4-16GB",
+    "A30": "A30-24GB",
+    "A800": "A800-80GB",
+    "H800": "H800-80GB",
+    "H20": "H20-96GB",
+    "H20-141GB": "H20-141GB",
+    "L20": "L20-48GB",
+    "XPU-A": "T4-16GB",
+    "XPU-B": "A10-24GB",
+    "XPU-C": "A100-40GB",
+    "XPU-D": "A100-80GB",
+    "XPU-E": "H100-80GB",
+}
+
+
+def resolve_gpu_type(name: str) -> GPUType:
+    if name in GPU_TYPE_CATALOG:
+        return GPU_TYPE_CATALOG[name]
+    canonical = ALIBABA_GPU_ALIASES.get(name.upper(), ALIBABA_GPU_ALIASES.get(name))
+    if canonical and canonical in GPU_TYPE_CATALOG:
+        return GPU_TYPE_CATALOG[canonical]
+    return GPUType(
+        name=name,
+        memory_gb=16.0,
+        tdp_watts=250.0,
+        compute_capability="7.0",
+        fp16_tflops=65.0,
+    )
 
 
 class GPU(BaseModel):

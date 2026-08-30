@@ -1,0 +1,1964 @@
+{
+  "generated_at": "2026-08-29T19:01:00.684941+00:00",
+  "summary": {
+    "total_findings": 5524,
+    "util_recovery_pct": 51.01,
+    "util_dedup_gpu_hours": 26345.4,
+    "util_wasted_gpu_hours": 51643.4,
+    "util_monthly_value": 160630.8,
+    "queue_recovery_pct": 69.08,
+    "queue_dedup_wait_hours": 1262.2,
+    "queue_monthly_value": 42872.44,
+    "total_monthly_value": 203503.24,
+    "avg_confidence": 0.842,
+    "high_confidence_count": 4969,
+    "findings_by_type": {
+      "over_allocation": 263,
+      "fragmentation": 327,
+      "idle_allocation": 4540,
+      "queue_inefficiency": 394
+    }
+  },
+  "top_findings": [
+    {
+      "rank": 1,
+      "opportunity_id": "fa5f2096-18c2-4adf-8626-9eccbe0f00a9",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 29de149a08d349b91d9e0a8241ebf66a was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "29de149a08d349b91d9e0a8241ebf66a",
+      "affected_jobs": [
+        "29de149a08d349b91d9e0a8241ebf66a"
+      ],
+      "affected_gpus": [
+        "dc2b8ce3c382b682430e03cb81024597-gpu-0",
+        "dc2b8ce3c382b682430e03cb81024597-gpu-1",
+        "dc2b8ce3c382b682430e03cb81024597-gpu-2",
+        "dc2b8ce3c382b682430e03cb81024597-gpu-3",
+        "dc2b8ce3c382b682430e03cb81024597-gpu-4",
+        "dc2b8ce3c382b682430e03cb81024597-gpu-5",
+        "dc2b8ce3c382b682430e03cb81024597-gpu-6",
+        "dc2b8ce3c382b682430e03cb81024597-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 29de149a08d349b91d9e0a8241ebf66a.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "dc2b8ce3c382b682430e03cb81024597-gpu-0",
+            "dc2b8ce3c382b682430e03cb81024597-gpu-1",
+            "dc2b8ce3c382b682430e03cb81024597-gpu-2",
+            "dc2b8ce3c382b682430e03cb81024597-gpu-3",
+            "dc2b8ce3c382b682430e03cb81024597-gpu-4",
+            "dc2b8ce3c382b682430e03cb81024597-gpu-5",
+            "dc2b8ce3c382b682430e03cb81024597-gpu-6",
+            "dc2b8ce3c382b682430e03cb81024597-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 29de149a08d349b91d9e0a8241ebf66a was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 2,
+      "opportunity_id": "fa0c78cd-e836-4194-83f1-1139a4e07387",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 1026fbdc0ef2c68c0d56e6c02daea802 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "1026fbdc0ef2c68c0d56e6c02daea802",
+      "affected_jobs": [
+        "1026fbdc0ef2c68c0d56e6c02daea802"
+      ],
+      "affected_gpus": [
+        "3bae353051455b319aa83b299aaf8709-gpu-0",
+        "3bae353051455b319aa83b299aaf8709-gpu-1",
+        "3bae353051455b319aa83b299aaf8709-gpu-2",
+        "3bae353051455b319aa83b299aaf8709-gpu-3",
+        "3bae353051455b319aa83b299aaf8709-gpu-4",
+        "3bae353051455b319aa83b299aaf8709-gpu-5",
+        "3bae353051455b319aa83b299aaf8709-gpu-6",
+        "3bae353051455b319aa83b299aaf8709-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 1026fbdc0ef2c68c0d56e6c02daea802.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "3bae353051455b319aa83b299aaf8709-gpu-0",
+            "3bae353051455b319aa83b299aaf8709-gpu-1",
+            "3bae353051455b319aa83b299aaf8709-gpu-2",
+            "3bae353051455b319aa83b299aaf8709-gpu-3",
+            "3bae353051455b319aa83b299aaf8709-gpu-4",
+            "3bae353051455b319aa83b299aaf8709-gpu-5",
+            "3bae353051455b319aa83b299aaf8709-gpu-6",
+            "3bae353051455b319aa83b299aaf8709-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 1026fbdc0ef2c68c0d56e6c02daea802 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 3,
+      "opportunity_id": "f1a19011-fdb0-499d-91d4-1e65b6247e53",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 6d4b4e7dd23da44937a9ed6b9016570d was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "6d4b4e7dd23da44937a9ed6b9016570d",
+      "affected_jobs": [
+        "6d4b4e7dd23da44937a9ed6b9016570d"
+      ],
+      "affected_gpus": [
+        "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-0",
+        "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-1",
+        "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-2",
+        "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-3",
+        "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-4",
+        "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-5",
+        "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-6",
+        "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 6d4b4e7dd23da44937a9ed6b9016570d.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-0",
+            "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-1",
+            "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-2",
+            "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-3",
+            "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-4",
+            "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-5",
+            "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-6",
+            "b8cf7ba507aeba5ea03e82d65d6d22b1-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 127.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 6d4b4e7dd23da44937a9ed6b9016570d was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 4,
+      "opportunity_id": "e42612d4-ac1e-4f2f-9a44-39749d8b7232",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job b8b44bf32f62e37f3172eab54d488436 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "b8b44bf32f62e37f3172eab54d488436",
+      "affected_jobs": [
+        "b8b44bf32f62e37f3172eab54d488436"
+      ],
+      "affected_gpus": [
+        "d9b9ecf259816d01d881e6606f040d64-gpu-0",
+        "d9b9ecf259816d01d881e6606f040d64-gpu-1",
+        "d9b9ecf259816d01d881e6606f040d64-gpu-2",
+        "d9b9ecf259816d01d881e6606f040d64-gpu-3",
+        "d9b9ecf259816d01d881e6606f040d64-gpu-4",
+        "d9b9ecf259816d01d881e6606f040d64-gpu-5",
+        "d9b9ecf259816d01d881e6606f040d64-gpu-6",
+        "d9b9ecf259816d01d881e6606f040d64-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by b8b44bf32f62e37f3172eab54d488436.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "d9b9ecf259816d01d881e6606f040d64-gpu-0",
+            "d9b9ecf259816d01d881e6606f040d64-gpu-1",
+            "d9b9ecf259816d01d881e6606f040d64-gpu-2",
+            "d9b9ecf259816d01d881e6606f040d64-gpu-3",
+            "d9b9ecf259816d01d881e6606f040d64-gpu-4",
+            "d9b9ecf259816d01d881e6606f040d64-gpu-5",
+            "d9b9ecf259816d01d881e6606f040d64-gpu-6",
+            "d9b9ecf259816d01d881e6606f040d64-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job b8b44bf32f62e37f3172eab54d488436 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 5,
+      "opportunity_id": "5dddf67c-11ed-4039-ada8-e8d150f237e7",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 438e420e46e249a82db6e34e2f47ec50 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "438e420e46e249a82db6e34e2f47ec50",
+      "affected_jobs": [
+        "438e420e46e249a82db6e34e2f47ec50"
+      ],
+      "affected_gpus": [
+        "c63e401688045ae454abed67e6480f7e-gpu-0",
+        "c63e401688045ae454abed67e6480f7e-gpu-1",
+        "c63e401688045ae454abed67e6480f7e-gpu-2",
+        "c63e401688045ae454abed67e6480f7e-gpu-3",
+        "c63e401688045ae454abed67e6480f7e-gpu-4",
+        "c63e401688045ae454abed67e6480f7e-gpu-5",
+        "c63e401688045ae454abed67e6480f7e-gpu-6",
+        "c63e401688045ae454abed67e6480f7e-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 438e420e46e249a82db6e34e2f47ec50.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "c63e401688045ae454abed67e6480f7e-gpu-0",
+            "c63e401688045ae454abed67e6480f7e-gpu-1",
+            "c63e401688045ae454abed67e6480f7e-gpu-2",
+            "c63e401688045ae454abed67e6480f7e-gpu-3",
+            "c63e401688045ae454abed67e6480f7e-gpu-4",
+            "c63e401688045ae454abed67e6480f7e-gpu-5",
+            "c63e401688045ae454abed67e6480f7e-gpu-6",
+            "c63e401688045ae454abed67e6480f7e-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 438e420e46e249a82db6e34e2f47ec50 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 6,
+      "opportunity_id": "bc3c994e-2c43-4615-847d-3ecd4aa68bd3",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job de2f65ff4699d464f374ee86c4cf5ce6 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "de2f65ff4699d464f374ee86c4cf5ce6",
+      "affected_jobs": [
+        "de2f65ff4699d464f374ee86c4cf5ce6"
+      ],
+      "affected_gpus": [
+        "90902d573f3c926e222e048e9441ca7d-gpu-0",
+        "90902d573f3c926e222e048e9441ca7d-gpu-1",
+        "90902d573f3c926e222e048e9441ca7d-gpu-2",
+        "90902d573f3c926e222e048e9441ca7d-gpu-3",
+        "90902d573f3c926e222e048e9441ca7d-gpu-4",
+        "90902d573f3c926e222e048e9441ca7d-gpu-5",
+        "90902d573f3c926e222e048e9441ca7d-gpu-6",
+        "90902d573f3c926e222e048e9441ca7d-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by de2f65ff4699d464f374ee86c4cf5ce6.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "90902d573f3c926e222e048e9441ca7d-gpu-0",
+            "90902d573f3c926e222e048e9441ca7d-gpu-1",
+            "90902d573f3c926e222e048e9441ca7d-gpu-2",
+            "90902d573f3c926e222e048e9441ca7d-gpu-3",
+            "90902d573f3c926e222e048e9441ca7d-gpu-4",
+            "90902d573f3c926e222e048e9441ca7d-gpu-5",
+            "90902d573f3c926e222e048e9441ca7d-gpu-6",
+            "90902d573f3c926e222e048e9441ca7d-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 1.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job de2f65ff4699d464f374ee86c4cf5ce6 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 7,
+      "opportunity_id": "a8e56541-9310-466f-be18-08ffe93db6e9",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job c7a8e6b368a43efdd3a10a7e824bf21b was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "c7a8e6b368a43efdd3a10a7e824bf21b",
+      "affected_jobs": [
+        "c7a8e6b368a43efdd3a10a7e824bf21b"
+      ],
+      "affected_gpus": [
+        "573f246172af0120b79e62da7d0dea3f-gpu-0",
+        "573f246172af0120b79e62da7d0dea3f-gpu-1",
+        "573f246172af0120b79e62da7d0dea3f-gpu-2",
+        "573f246172af0120b79e62da7d0dea3f-gpu-3",
+        "573f246172af0120b79e62da7d0dea3f-gpu-4",
+        "573f246172af0120b79e62da7d0dea3f-gpu-5",
+        "573f246172af0120b79e62da7d0dea3f-gpu-6",
+        "573f246172af0120b79e62da7d0dea3f-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by c7a8e6b368a43efdd3a10a7e824bf21b.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "573f246172af0120b79e62da7d0dea3f-gpu-0",
+            "573f246172af0120b79e62da7d0dea3f-gpu-1",
+            "573f246172af0120b79e62da7d0dea3f-gpu-2",
+            "573f246172af0120b79e62da7d0dea3f-gpu-3",
+            "573f246172af0120b79e62da7d0dea3f-gpu-4",
+            "573f246172af0120b79e62da7d0dea3f-gpu-5",
+            "573f246172af0120b79e62da7d0dea3f-gpu-6",
+            "573f246172af0120b79e62da7d0dea3f-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 58.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job c7a8e6b368a43efdd3a10a7e824bf21b was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 8,
+      "opportunity_id": "226a0b27-d242-440c-b020-00f4c2da1504",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 185b4ed3b04bb18c470276eeab1881ac was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "185b4ed3b04bb18c470276eeab1881ac",
+      "affected_jobs": [
+        "185b4ed3b04bb18c470276eeab1881ac"
+      ],
+      "affected_gpus": [
+        "79944d029812864751a7e4ff6ffbb1fd-gpu-0",
+        "79944d029812864751a7e4ff6ffbb1fd-gpu-1",
+        "79944d029812864751a7e4ff6ffbb1fd-gpu-2",
+        "79944d029812864751a7e4ff6ffbb1fd-gpu-3",
+        "79944d029812864751a7e4ff6ffbb1fd-gpu-4",
+        "79944d029812864751a7e4ff6ffbb1fd-gpu-5",
+        "79944d029812864751a7e4ff6ffbb1fd-gpu-6",
+        "79944d029812864751a7e4ff6ffbb1fd-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 185b4ed3b04bb18c470276eeab1881ac.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "79944d029812864751a7e4ff6ffbb1fd-gpu-0",
+            "79944d029812864751a7e4ff6ffbb1fd-gpu-1",
+            "79944d029812864751a7e4ff6ffbb1fd-gpu-2",
+            "79944d029812864751a7e4ff6ffbb1fd-gpu-3",
+            "79944d029812864751a7e4ff6ffbb1fd-gpu-4",
+            "79944d029812864751a7e4ff6ffbb1fd-gpu-5",
+            "79944d029812864751a7e4ff6ffbb1fd-gpu-6",
+            "79944d029812864751a7e4ff6ffbb1fd-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 1517.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 185b4ed3b04bb18c470276eeab1881ac was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 9,
+      "opportunity_id": "d58559cc-205a-4584-a055-a1ff5969b929",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 29426bcaba87b2c7671d402e43e040ad was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "29426bcaba87b2c7671d402e43e040ad",
+      "affected_jobs": [
+        "29426bcaba87b2c7671d402e43e040ad"
+      ],
+      "affected_gpus": [
+        "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-0",
+        "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-1",
+        "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-2",
+        "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-3",
+        "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-4",
+        "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-5",
+        "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-6",
+        "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 29426bcaba87b2c7671d402e43e040ad.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-0",
+            "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-1",
+            "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-2",
+            "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-3",
+            "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-4",
+            "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-5",
+            "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-6",
+            "89a7e49c79cf231f06ef6d7fe9e4d4de-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 29426bcaba87b2c7671d402e43e040ad was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 10,
+      "opportunity_id": "49d52516-1796-49a7-9221-922c854b7793",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 649ad87d6b4c52344c9e47fbc4d19c01 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "649ad87d6b4c52344c9e47fbc4d19c01",
+      "affected_jobs": [
+        "649ad87d6b4c52344c9e47fbc4d19c01"
+      ],
+      "affected_gpus": [
+        "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-0",
+        "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-1",
+        "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-2",
+        "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-3",
+        "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-4",
+        "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-5",
+        "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-6",
+        "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 649ad87d6b4c52344c9e47fbc4d19c01.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-0",
+            "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-1",
+            "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-2",
+            "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-3",
+            "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-4",
+            "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-5",
+            "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-6",
+            "bc3b5a6ba758c3771e2ee0db3026dc0a-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 38813.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 649ad87d6b4c52344c9e47fbc4d19c01 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 11,
+      "opportunity_id": "4763dbf8-5262-44c8-b9ba-082c220f798c",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 14ebc79f7529f67cc2525d9cc2724d91 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "14ebc79f7529f67cc2525d9cc2724d91",
+      "affected_jobs": [
+        "14ebc79f7529f67cc2525d9cc2724d91"
+      ],
+      "affected_gpus": [
+        "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-0",
+        "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-1",
+        "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-2",
+        "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-3",
+        "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-4",
+        "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-5",
+        "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-6",
+        "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 14ebc79f7529f67cc2525d9cc2724d91.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-0",
+            "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-1",
+            "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-2",
+            "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-3",
+            "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-4",
+            "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-5",
+            "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-6",
+            "b58d62a2502a64e58ffdc85a3b1f49f7-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 14ebc79f7529f67cc2525d9cc2724d91 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 12,
+      "opportunity_id": "f40c69d9-66c7-43b4-83b6-8a8bfd34c861",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 5a312323bd1006996501d24bae3e71ec was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.2%).",
+      "severity": 0.998,
+      "job_id": "5a312323bd1006996501d24bae3e71ec",
+      "affected_jobs": [
+        "5a312323bd1006996501d24bae3e71ec"
+      ],
+      "affected_gpus": [
+        "69db2ea5138a833b3f3df3bf54003cfd-gpu-0",
+        "69db2ea5138a833b3f3df3bf54003cfd-gpu-1",
+        "69db2ea5138a833b3f3df3bf54003cfd-gpu-2",
+        "69db2ea5138a833b3f3df3bf54003cfd-gpu-3",
+        "69db2ea5138a833b3f3df3bf54003cfd-gpu-4",
+        "69db2ea5138a833b3f3df3bf54003cfd-gpu-5",
+        "69db2ea5138a833b3f3df3bf54003cfd-gpu-6",
+        "69db2ea5138a833b3f3df3bf54003cfd-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 5a312323bd1006996501d24bae3e71ec.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "69db2ea5138a833b3f3df3bf54003cfd-gpu-0",
+            "69db2ea5138a833b3f3df3bf54003cfd-gpu-1",
+            "69db2ea5138a833b3f3df3bf54003cfd-gpu-2",
+            "69db2ea5138a833b3f3df3bf54003cfd-gpu-3",
+            "69db2ea5138a833b3f3df3bf54003cfd-gpu-4",
+            "69db2ea5138a833b3f3df3bf54003cfd-gpu-5",
+            "69db2ea5138a833b3f3df3bf54003cfd-gpu-6",
+            "69db2ea5138a833b3f3df3bf54003cfd-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.22% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 687.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.866,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.22% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 5a312323bd1006996501d24bae3e71ec was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.2%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 13,
+      "opportunity_id": "c780cdd4-cb27-453c-b1f6-e4cf3f6e2c90",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 38e8c73eab54b87f0eb3bc4f255ac931 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "38e8c73eab54b87f0eb3bc4f255ac931",
+      "affected_jobs": [
+        "38e8c73eab54b87f0eb3bc4f255ac931"
+      ],
+      "affected_gpus": [
+        "6cf89344f2bb1324772de24d6bf9f0db-gpu-0",
+        "6cf89344f2bb1324772de24d6bf9f0db-gpu-1",
+        "6cf89344f2bb1324772de24d6bf9f0db-gpu-2",
+        "6cf89344f2bb1324772de24d6bf9f0db-gpu-3",
+        "6cf89344f2bb1324772de24d6bf9f0db-gpu-4",
+        "6cf89344f2bb1324772de24d6bf9f0db-gpu-5",
+        "6cf89344f2bb1324772de24d6bf9f0db-gpu-6",
+        "6cf89344f2bb1324772de24d6bf9f0db-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 38e8c73eab54b87f0eb3bc4f255ac931.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "6cf89344f2bb1324772de24d6bf9f0db-gpu-0",
+            "6cf89344f2bb1324772de24d6bf9f0db-gpu-1",
+            "6cf89344f2bb1324772de24d6bf9f0db-gpu-2",
+            "6cf89344f2bb1324772de24d6bf9f0db-gpu-3",
+            "6cf89344f2bb1324772de24d6bf9f0db-gpu-4",
+            "6cf89344f2bb1324772de24d6bf9f0db-gpu-5",
+            "6cf89344f2bb1324772de24d6bf9f0db-gpu-6",
+            "6cf89344f2bb1324772de24d6bf9f0db-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 38e8c73eab54b87f0eb3bc4f255ac931 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 14,
+      "opportunity_id": "d5adc17b-8e3d-4111-8cec-2c0674ca688e",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job d4dabaf99d21d7f7c5096a6860ccd8b9 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "d4dabaf99d21d7f7c5096a6860ccd8b9",
+      "affected_jobs": [
+        "d4dabaf99d21d7f7c5096a6860ccd8b9"
+      ],
+      "affected_gpus": [
+        "5536da2d759c7970e8978d2c00c48a76-gpu-0",
+        "5536da2d759c7970e8978d2c00c48a76-gpu-1",
+        "5536da2d759c7970e8978d2c00c48a76-gpu-2",
+        "5536da2d759c7970e8978d2c00c48a76-gpu-3",
+        "5536da2d759c7970e8978d2c00c48a76-gpu-4",
+        "5536da2d759c7970e8978d2c00c48a76-gpu-5",
+        "5536da2d759c7970e8978d2c00c48a76-gpu-6",
+        "5536da2d759c7970e8978d2c00c48a76-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by d4dabaf99d21d7f7c5096a6860ccd8b9.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "5536da2d759c7970e8978d2c00c48a76-gpu-0",
+            "5536da2d759c7970e8978d2c00c48a76-gpu-1",
+            "5536da2d759c7970e8978d2c00c48a76-gpu-2",
+            "5536da2d759c7970e8978d2c00c48a76-gpu-3",
+            "5536da2d759c7970e8978d2c00c48a76-gpu-4",
+            "5536da2d759c7970e8978d2c00c48a76-gpu-5",
+            "5536da2d759c7970e8978d2c00c48a76-gpu-6",
+            "5536da2d759c7970e8978d2c00c48a76-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 41302.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job d4dabaf99d21d7f7c5096a6860ccd8b9 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 15,
+      "opportunity_id": "95694d8f-422e-4406-a775-1787e4b383a1",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 9ba1f9087bddd185a933e9f5b8ad31a7 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "9ba1f9087bddd185a933e9f5b8ad31a7",
+      "affected_jobs": [
+        "9ba1f9087bddd185a933e9f5b8ad31a7"
+      ],
+      "affected_gpus": [
+        "637b1037c98d655a0d5d4d7a4a199e6e-gpu-0",
+        "637b1037c98d655a0d5d4d7a4a199e6e-gpu-1",
+        "637b1037c98d655a0d5d4d7a4a199e6e-gpu-2",
+        "637b1037c98d655a0d5d4d7a4a199e6e-gpu-3",
+        "637b1037c98d655a0d5d4d7a4a199e6e-gpu-4",
+        "637b1037c98d655a0d5d4d7a4a199e6e-gpu-5",
+        "637b1037c98d655a0d5d4d7a4a199e6e-gpu-6",
+        "637b1037c98d655a0d5d4d7a4a199e6e-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 9ba1f9087bddd185a933e9f5b8ad31a7.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "637b1037c98d655a0d5d4d7a4a199e6e-gpu-0",
+            "637b1037c98d655a0d5d4d7a4a199e6e-gpu-1",
+            "637b1037c98d655a0d5d4d7a4a199e6e-gpu-2",
+            "637b1037c98d655a0d5d4d7a4a199e6e-gpu-3",
+            "637b1037c98d655a0d5d4d7a4a199e6e-gpu-4",
+            "637b1037c98d655a0d5d4d7a4a199e6e-gpu-5",
+            "637b1037c98d655a0d5d4d7a4a199e6e-gpu-6",
+            "637b1037c98d655a0d5d4d7a4a199e6e-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 0.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 9ba1f9087bddd185a933e9f5b8ad31a7 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 16,
+      "opportunity_id": "51fef851-8f5a-41a9-9fed-3b4594509de9",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 48e246e546e343caa8349715dcff298c was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "48e246e546e343caa8349715dcff298c",
+      "affected_jobs": [
+        "48e246e546e343caa8349715dcff298c"
+      ],
+      "affected_gpus": [
+        "046aba367f05ecb5a6f10e3098ad1b38-gpu-0",
+        "046aba367f05ecb5a6f10e3098ad1b38-gpu-1",
+        "046aba367f05ecb5a6f10e3098ad1b38-gpu-2",
+        "046aba367f05ecb5a6f10e3098ad1b38-gpu-3",
+        "046aba367f05ecb5a6f10e3098ad1b38-gpu-4",
+        "046aba367f05ecb5a6f10e3098ad1b38-gpu-5",
+        "046aba367f05ecb5a6f10e3098ad1b38-gpu-6",
+        "046aba367f05ecb5a6f10e3098ad1b38-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 48e246e546e343caa8349715dcff298c.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "046aba367f05ecb5a6f10e3098ad1b38-gpu-0",
+            "046aba367f05ecb5a6f10e3098ad1b38-gpu-1",
+            "046aba367f05ecb5a6f10e3098ad1b38-gpu-2",
+            "046aba367f05ecb5a6f10e3098ad1b38-gpu-3",
+            "046aba367f05ecb5a6f10e3098ad1b38-gpu-4",
+            "046aba367f05ecb5a6f10e3098ad1b38-gpu-5",
+            "046aba367f05ecb5a6f10e3098ad1b38-gpu-6",
+            "046aba367f05ecb5a6f10e3098ad1b38-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 23902.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 48e246e546e343caa8349715dcff298c was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 17,
+      "opportunity_id": "b4689d86-bc88-48b4-9c54-f1f0479335bf",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 9bb271f8f00c04cdd58d46885e419858 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "9bb271f8f00c04cdd58d46885e419858",
+      "affected_jobs": [
+        "9bb271f8f00c04cdd58d46885e419858"
+      ],
+      "affected_gpus": [
+        "6d21923aa82c8dec61c17c425ed5fb66-gpu-0",
+        "6d21923aa82c8dec61c17c425ed5fb66-gpu-1",
+        "6d21923aa82c8dec61c17c425ed5fb66-gpu-2",
+        "6d21923aa82c8dec61c17c425ed5fb66-gpu-3",
+        "6d21923aa82c8dec61c17c425ed5fb66-gpu-4",
+        "6d21923aa82c8dec61c17c425ed5fb66-gpu-5",
+        "6d21923aa82c8dec61c17c425ed5fb66-gpu-6",
+        "6d21923aa82c8dec61c17c425ed5fb66-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 9bb271f8f00c04cdd58d46885e419858.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "6d21923aa82c8dec61c17c425ed5fb66-gpu-0",
+            "6d21923aa82c8dec61c17c425ed5fb66-gpu-1",
+            "6d21923aa82c8dec61c17c425ed5fb66-gpu-2",
+            "6d21923aa82c8dec61c17c425ed5fb66-gpu-3",
+            "6d21923aa82c8dec61c17c425ed5fb66-gpu-4",
+            "6d21923aa82c8dec61c17c425ed5fb66-gpu-5",
+            "6d21923aa82c8dec61c17c425ed5fb66-gpu-6",
+            "6d21923aa82c8dec61c17c425ed5fb66-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 15152.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 9bb271f8f00c04cdd58d46885e419858 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 18,
+      "opportunity_id": "e20273a7-76cb-4c51-9fd1-cb54b7224b8f",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job cc1e00a97d924d0b46fa31f571971cf7 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "cc1e00a97d924d0b46fa31f571971cf7",
+      "affected_jobs": [
+        "cc1e00a97d924d0b46fa31f571971cf7"
+      ],
+      "affected_gpus": [
+        "aea5a0cffeddd577c283e45c91ac8638-gpu-0",
+        "aea5a0cffeddd577c283e45c91ac8638-gpu-1",
+        "aea5a0cffeddd577c283e45c91ac8638-gpu-2",
+        "aea5a0cffeddd577c283e45c91ac8638-gpu-3",
+        "aea5a0cffeddd577c283e45c91ac8638-gpu-4",
+        "aea5a0cffeddd577c283e45c91ac8638-gpu-5",
+        "aea5a0cffeddd577c283e45c91ac8638-gpu-6",
+        "aea5a0cffeddd577c283e45c91ac8638-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by cc1e00a97d924d0b46fa31f571971cf7.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "aea5a0cffeddd577c283e45c91ac8638-gpu-0",
+            "aea5a0cffeddd577c283e45c91ac8638-gpu-1",
+            "aea5a0cffeddd577c283e45c91ac8638-gpu-2",
+            "aea5a0cffeddd577c283e45c91ac8638-gpu-3",
+            "aea5a0cffeddd577c283e45c91ac8638-gpu-4",
+            "aea5a0cffeddd577c283e45c91ac8638-gpu-5",
+            "aea5a0cffeddd577c283e45c91ac8638-gpu-6",
+            "aea5a0cffeddd577c283e45c91ac8638-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 1945.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job cc1e00a97d924d0b46fa31f571971cf7 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 19,
+      "opportunity_id": "273c2dc1-f139-477f-9f49-b9f4a7316c95",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job 64b5d865b5ef975818b2ec32d220ded7 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "64b5d865b5ef975818b2ec32d220ded7",
+      "affected_jobs": [
+        "64b5d865b5ef975818b2ec32d220ded7"
+      ],
+      "affected_gpus": [
+        "31e612d1109fc32bc77da6b0784555c7-gpu-0",
+        "31e612d1109fc32bc77da6b0784555c7-gpu-1",
+        "31e612d1109fc32bc77da6b0784555c7-gpu-2",
+        "31e612d1109fc32bc77da6b0784555c7-gpu-3",
+        "31e612d1109fc32bc77da6b0784555c7-gpu-4",
+        "31e612d1109fc32bc77da6b0784555c7-gpu-5",
+        "31e612d1109fc32bc77da6b0784555c7-gpu-6",
+        "31e612d1109fc32bc77da6b0784555c7-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by 64b5d865b5ef975818b2ec32d220ded7.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "31e612d1109fc32bc77da6b0784555c7-gpu-0",
+            "31e612d1109fc32bc77da6b0784555c7-gpu-1",
+            "31e612d1109fc32bc77da6b0784555c7-gpu-2",
+            "31e612d1109fc32bc77da6b0784555c7-gpu-3",
+            "31e612d1109fc32bc77da6b0784555c7-gpu-4",
+            "31e612d1109fc32bc77da6b0784555c7-gpu-5",
+            "31e612d1109fc32bc77da6b0784555c7-gpu-6",
+            "31e612d1109fc32bc77da6b0784555c7-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 25900.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job 64b5d865b5ef975818b2ec32d220ded7 was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    },
+    {
+      "rank": 20,
+      "opportunity_id": "c33baf85-cef6-4a58-8b6b-b0910105d33b",
+      "type": "over_allocation",
+      "title": "Over-allocated GPU job",
+      "description": "Job b4b92324bc4666f21c4b8090a6acbf8b was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%).",
+      "severity": 1.0,
+      "job_id": "b4b92324bc4666f21c4b8090a6acbf8b",
+      "affected_jobs": [
+        "b4b92324bc4666f21c4b8090a6acbf8b"
+      ],
+      "affected_gpus": [
+        "b999e14d98b3859624f210dfe575bd72-gpu-0",
+        "b999e14d98b3859624f210dfe575bd72-gpu-1",
+        "b999e14d98b3859624f210dfe575bd72-gpu-2",
+        "b999e14d98b3859624f210dfe575bd72-gpu-3",
+        "b999e14d98b3859624f210dfe575bd72-gpu-4",
+        "b999e14d98b3859624f210dfe575bd72-gpu-5",
+        "b999e14d98b3859624f210dfe575bd72-gpu-6",
+        "b999e14d98b3859624f210dfe575bd72-gpu-7"
+      ],
+      "alternative": {
+        "description": "Release 8 idle GPUs held by b4b92324bc4666f21c4b8090a6acbf8b.",
+        "proposed_action": {
+          "kind": "release_gpus",
+          "gpu_count": 0,
+          "release_gpu_ids": [
+            "b999e14d98b3859624f210dfe575bd72-gpu-0",
+            "b999e14d98b3859624f210dfe575bd72-gpu-1",
+            "b999e14d98b3859624f210dfe575bd72-gpu-2",
+            "b999e14d98b3859624f210dfe575bd72-gpu-3",
+            "b999e14d98b3859624f210dfe575bd72-gpu-4",
+            "b999e14d98b3859624f210dfe575bd72-gpu-5",
+            "b999e14d98b3859624f210dfe575bd72-gpu-6",
+            "b999e14d98b3859624f210dfe575bd72-gpu-7"
+          ],
+          "original_gpu_count": 8
+        },
+        "rationale": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work.",
+        "generation_method": "agent:gpu_allocation+probe_release_idle_gpus",
+        "tools_invoked": [
+          "inspect_utilization",
+          "list_idle_capacity",
+          "probe_headroom_size",
+          "probe_release_idle_gpus",
+          "probe_alternate_placement",
+          "probe_unblocked_queue"
+        ]
+      },
+      "metrics": {
+        "gpu_hours_saved": 192.0,
+        "idle_hours_recovered": 192.0,
+        "utilization_improvement": 0.0,
+        "queue_time_reduction_seconds": 2.0,
+        "fragmentation_reduction": 0.0
+      },
+      "value": {
+        "gpu_hours_recovered": 192.0,
+        "compute_cost_avoided": 424.32,
+        "equivalent_gpus": 0.733,
+        "monthly_value": 1166.89,
+        "annual_value": 14002.69,
+        "gpu_type": "A100-80GB",
+        "assumptions": [
+          "GPU type priced as A100-80GB at $2.21 per GPU-hour (cloud reference, user-configurable).",
+          "Value is the difference between observed decision X and feasible alternative Y, not a guarantee of future savings.",
+          "Linear scaling of GPU-hours to monthly/annual value assumes a similar mix of work continues.",
+          "Analysis window is 261.8 hours; monthly hours assumed 720.",
+          "Facility multiplier 1.4 is recorded but not applied to the headline compute-cost figure.",
+          "No production change is implied or performed."
+        ]
+      },
+      "confidence": {
+        "score": 0.87,
+        "level": "high",
+        "constraints_checked": [
+          "gpu_identity",
+          "node_identity",
+          "release_subset_of_allocation"
+        ],
+        "uncertainty_sources": [],
+        "explanation": "Mean utilization 0.00% over the hold period. The GPUs were allocated but not doing useful work. Compared with the observed decision, this alternative is expected to differ because Job b4b92324bc4666f21c4b8090a6acbf8b was allocated 8 GPUs but only 0 showed mean utilization above 40% (cluster-wide mean 0.0%). Confidence is high (0.87)."
+      },
+      "review": {
+        "verdict": "LIKELY_VALID",
+        "notes": "Release 8 idle GPUs",
+        "constraints_summary": "gpu_identity, node_identity, release_subset_of_allocation",
+        "checklist": [
+          "[ ] Proposed Y was physically feasible at decision time",
+          "[ ] GPU type/count/topology constraints satisfied",
+          "[ ] No hidden affinity or locality constraint violated",
+          "[ ] Utilization data supports the waste claim",
+          "[ ] Value estimate is conservative (not inflated)",
+          "[ ] Alternative is operationally realistic"
+        ]
+      }
+    }
+  ]
+}
