@@ -23,7 +23,11 @@ class ConfidenceScorer:
         constraints_checked: list[str],
         similar_count: int = 0,
     ) -> ConfidenceAssessment:
-        samples = [s for s in dataset.samples if s.job_id in set(observation.affected_job_ids)]
+        samples = [
+            sample
+            for job_id in set(observation.affected_job_ids)
+            for sample in dataset.samples_for_job(job_id)
+        ]
         completeness = 1.0 if samples else 0.2
         if observation.affected_gpu_ids:
             covered = {s.gpu_id for s in samples}

@@ -5,13 +5,17 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr
 
 from natilah.models.enums import (
+    ActionStatus,
+    AgentObjective,
+    CandidateOutcome,
     ConfidenceLevel,
     DecisionType,
     JobState,
     OpportunityType,
+    Resolution,
 )
 
 
@@ -179,6 +183,22 @@ def resolve_gpu_type(name: str) -> GPUType:
     )
 
 
+def gpu_type_matches(requested: str | None, actual: str | None) -> bool:
+    """Compare a requested GPU type with a physical one, alias-aware.
+
+    Traces record what the user asked for ("A100"), while the catalog records
+    what the node has ("A100-80GB"). Comparing those two strings directly makes
+    every feasibility check fail, so both sides are resolved first.
+    """
+    if not requested:
+        return True
+    if not actual:
+        return False
+    if requested == actual:
+        return True
+    return resolve_gpu_type(requested).name == resolve_gpu_type(actual).name
+
+
 class GPU(BaseModel):
     gpu_id: str
     gpu_type: GPUType
@@ -270,9 +290,19 @@ class CapacityMap(BaseModel):
     idle_gpus: int
     by_node: dict[str, NodeCapacity]
     by_gpu_type: dict[str, int]
-    contiguous_blocks: list[Block]
+    contiguous_blocks: list[Block] = Field(default_factory=list)
     contiguity_index: float = 0.0
     largest_contiguous_block: int = 0
+
+    # Block objects are only needed by callers that inspect free-block shape;
+    # the size and contiguity numbers above are computed without them.
+    _block_builder: Any = PrivateAttr(default=None)
+
+    def blocks(self) -> list[Block]:
+        """Free contiguous blocks, largest first, built on first use."""
+        if not self.contiguous_blocks and self._block_builder is not None:
+            self.contiguous_blocks = self._block_builder()
+        return self.contiguous_blocks
 
 
 class NodeState(BaseModel):
@@ -285,12 +315,23 @@ class NodeState(BaseModel):
 
 class ClusterStateSnapshot(BaseModel):
     timestamp: datetime
-    nodes: list[NodeState]
-    running_jobs: list[Job]
-    pending_jobs: list[Job]
-    gpu_allocations: dict[str, str | None]
-    idle_gpus: list[str]
+    nodes: list[NodeState] = Field(default_factory=list)
+    running_jobs: list[Job] = Field(default_factory=list)
+    pending_jobs: list[Job] = Field(default_factory=list)
+    gpu_allocations: dict[str, str | None] = Field(default_factory=dict)
+    idle_gpus: list[str] = Field(default_factory=list)
     available_capacity: CapacityMap
+
+    # Per-node states cost a model per node per snapshot and almost nothing
+    # reads them, so the reconstructor attaches a builder instead of paying
+    # that cost on every reconstruction. Use node_states(), not .nodes.
+    _node_builder: Any = PrivateAttr(default=None)
+
+    def node_states(self) -> list[NodeState]:
+        """Per-node view of this instant, built on first use."""
+        if not self.nodes and self._node_builder is not None:
+            self.nodes = self._node_builder(self.gpu_allocations)
+        return self.nodes
 
 
 class Observation(BaseModel):
@@ -388,6 +429,76 @@ class UtilizationPoint(BaseModel):
     alternative_pct: float | None = None
 
 
+class GPUInterval(BaseModel):
+    """A GPU held over a time window. Unit of the coordination layer's ledger."""
+
+    gpu_id: str
+    start: datetime
+    end: datetime
+
+    @property
+    def gpu_hours(self) -> float:
+        return max(0.0, (self.end - self.start).total_seconds() / 3600.0)
+
+
+class ResourceClaim(BaseModel):
+    """Exactly which GPU-hours and queue-seconds a finding claims to recover.
+
+    The coordination layer needs this to deduplicate: two agents may describe
+    the same wasted GPU-hours from different angles, and those hours may only
+    be counted once.
+    """
+
+    intervals: list[GPUInterval] = Field(default_factory=list)
+    queue_job_ids: list[str] = Field(default_factory=list)
+    queue_seconds: float = 0.0
+    basis: str = ""
+
+    @property
+    def gpu_hours(self) -> float:
+        return sum(i.gpu_hours for i in self.intervals)
+
+    @property
+    def gpu_ids(self) -> list[str]:
+        return sorted({i.gpu_id for i in self.intervals})
+
+
+class CandidateRecord(BaseModel):
+    """Audit record for every alternative Y the agent considered."""
+
+    alternative_id: str
+    description: str
+    generation_method: str
+    outcome: CandidateOutcome
+    constraints_checked: list[str] = Field(default_factory=list)
+    violations: list[str] = Field(default_factory=list)
+    rejection_reason: str | None = None
+    gpu_hours_saved: float = 0.0
+    queue_time_reduction_seconds: float = 0.0
+    monthly_value: float = 0.0
+    confidence_score: float = 0.0
+    tools_invoked: list[str] = Field(default_factory=list)
+
+
+class Attribution(BaseModel):
+    """Coordination-layer verdict: value after dedup, conflicts, and ranking."""
+
+    rank: int = 0
+    resolution: Resolution = Resolution.UNIQUE
+    claimed_gpu_hours: float = 0.0
+    attributed_gpu_hours: float = 0.0
+    overlap_gpu_hours: float = 0.0
+    claimed_queue_seconds: float = 0.0
+    attributed_queue_seconds: float = 0.0
+    attributed_monthly_value: float = 0.0
+    attributed_annual_value: float = 0.0
+    expected_monthly_value: float = 0.0
+    overlaps_with: list[str] = Field(default_factory=list)
+    conflicts_with: list[str] = Field(default_factory=list)
+    superseded_by: str | None = None
+    notes: list[str] = Field(default_factory=list)
+
+
 class Finding(BaseModel):
     """Persisted counterfactual: observed X, feasible Y, technical delta, economic value."""
 
@@ -406,6 +517,55 @@ class Finding(BaseModel):
     confidence: ConfidenceAssessment
     utilization_series: list[UtilizationPoint] = Field(default_factory=list)
 
+    # Specialized-agent layer
+    agent_name: str = ""
+    objective: AgentObjective | None = None
+    recommended_action: str = ""
+    claim: ResourceClaim = Field(default_factory=ResourceClaim)
+    candidates_considered: list[CandidateRecord] = Field(default_factory=list)
+    evidence: dict[str, Any] = Field(default_factory=dict)
+    selection_score: float = 0.0
+
+    # Coordination layer (filled by AgentCoordinator, not by the agent)
+    attribution: Attribution = Field(default_factory=Attribution)
+    status: ActionStatus = ActionStatus.AWAITING_APPROVAL
+
+
+class AgentRunSummary(BaseModel):
+    """Per-agent accounting for one coordinated analysis run."""
+
+    agent_name: str
+    objective: AgentObjective
+    observations: int = 0
+    candidates_generated: int = 0
+    candidates_rejected_infeasible: int = 0
+    candidates_rejected_no_gain: int = 0
+    findings: int = 0
+    claimed_gpu_hours: float = 0.0
+    claimed_monthly_value: float = 0.0
+    llm_used: bool = False
+    error: str | None = None
+
+
+class CoordinationReport(BaseModel):
+    """Output of the coordination layer: ranked, deduplicated, conflict-free."""
+
+    generated_at: datetime
+    agents: list[AgentRunSummary] = Field(default_factory=list)
+    total_findings: int = 0
+    ranked_findings: int = 0
+    suppressed_findings: int = 0
+    conflicts_resolved: int = 0
+    duplicate_gpu_hours_removed: float = 0.0
+    duplicate_queue_seconds_removed: float = 0.0
+    claimed_gpu_hours: float = 0.0
+    attributed_gpu_hours: float = 0.0
+    claimed_monthly_value: float = 0.0
+    attributed_monthly_value: float = 0.0
+    attributed_annual_value: float = 0.0
+    top_actions: list[str] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+
 
 class ClusterDataset(BaseModel):
     nodes: list[Node] = Field(default_factory=list)
@@ -416,17 +576,54 @@ class ClusterDataset(BaseModel):
     decisions: list[SchedulerDecision] = Field(default_factory=list)
     queue_snapshots: list[QueueSnapshot] = Field(default_factory=list)
 
+    # Lookups are rebuilt on first use and cached: analysis walks these
+    # indexes thousands of times per run, once per candidate alternative.
+    _job_index: dict[str, Job] | None = PrivateAttr(default=None)
+    _gpu_index: dict[str, GPU] | None = PrivateAttr(default=None)
+    _node_index: dict[str, Node] | None = PrivateAttr(default=None)
+    _allocation_index: dict[str, Allocation] | None = PrivateAttr(default=None)
+    _samples_index: dict[str, list[GPUUtilizationSample]] | None = PrivateAttr(default=None)
+
+    def invalidate_indexes(self) -> None:
+        """Call after mutating any of the lists above."""
+        self._job_index = None
+        self._gpu_index = None
+        self._node_index = None
+        self._allocation_index = None
+        self._samples_index = None
+
     def job_by_id(self) -> dict[str, Job]:
-        return {j.job_id: j for j in self.jobs}
+        if self._job_index is None:
+            self._job_index = {j.job_id: j for j in self.jobs}
+        return self._job_index
 
     def gpu_by_id(self) -> dict[str, GPU]:
-        return {g.gpu_id: g for g in self.gpus}
+        if self._gpu_index is None:
+            self._gpu_index = {g.gpu_id: g for g in self.gpus}
+        return self._gpu_index
 
     def node_by_id(self) -> dict[str, Node]:
-        return {n.node_id: n for n in self.nodes}
+        if self._node_index is None:
+            self._node_index = {n.node_id: n for n in self.nodes}
+        return self._node_index
 
     def allocation_by_job(self) -> dict[str, Allocation]:
-        return {a.job_id: a for a in self.allocations}
+        if self._allocation_index is None:
+            self._allocation_index = {a.job_id: a for a in self.allocations}
+        return self._allocation_index
+
+    def samples_by_job(self) -> dict[str, list[GPUUtilizationSample]]:
+        """Telemetry grouped by job. Scanning `samples` per job is O(jobs x samples)."""
+        if self._samples_index is None:
+            index: dict[str, list[GPUUtilizationSample]] = {}
+            for sample in self.samples:
+                if sample.job_id:
+                    index.setdefault(sample.job_id, []).append(sample)
+            self._samples_index = index
+        return self._samples_index
+
+    def samples_for_job(self, job_id: str) -> list[GPUUtilizationSample]:
+        return self.samples_by_job().get(job_id, [])
 
 
 class TimeRange(BaseModel):

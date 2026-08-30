@@ -26,11 +26,88 @@ class IngestionResponse(BaseModel):
     source: str
 
 
+class AgentSummarySchema(BaseModel):
+    agent_name: str
+    objective: str
+    observations: int = 0
+    candidates_generated: int = 0
+    candidates_rejected_infeasible: int = 0
+    candidates_rejected_no_gain: int = 0
+    findings: int = 0
+    claimed_gpu_hours: float = 0.0
+    claimed_monthly_value: float = 0.0
+    llm_used: bool = False
+    error: str | None = None
+
+
+class CoordinationSummary(BaseModel):
+    total_findings: int = 0
+    ranked_findings: int = 0
+    suppressed_findings: int = 0
+    conflicts_resolved: int = 0
+    duplicate_gpu_hours_removed: float = 0.0
+    claimed_gpu_hours: float = 0.0
+    attributed_gpu_hours: float = 0.0
+    claimed_monthly_value: float = 0.0
+    attributed_monthly_value: float = 0.0
+    attributed_annual_value: float = 0.0
+    agents: list[AgentSummarySchema] = Field(default_factory=list)
+    top_actions: list[str] = Field(default_factory=list)
+
+
 class AnalysisRunResponse(BaseModel):
     run_id: str
     status: str
     opportunities_found: int = 0
     error: str | None = None
+    coordination: CoordinationSummary | None = None
+
+
+class AgentInfo(BaseModel):
+    name: str
+    objective: str
+    signals: list[str]
+    finding_title: str
+    llm_enabled: bool
+
+
+class ActionListItem(BaseModel):
+    rank: int
+    opportunity_id: str
+    agent_name: str
+    objective: str | None = None
+    opportunity_type: str
+    title: str
+    recommended_action: str
+    what_happened: str
+    alternative: str
+    gpu_hours_recovered: float
+    queue_hours_recovered: float
+    monthly_value: float
+    annual_value: float
+    claimed_monthly_value: float
+    confidence_level: str
+    confidence_score: float
+    resolution: str
+    status: str
+    affected_job_ids: list[str]
+    affected_gpu_ids: list[str]
+
+
+class ActionDetail(ActionListItem):
+    claim: dict[str, Any]
+    attribution: dict[str, Any]
+    candidates_considered: list[dict[str, Any]]
+    constraints_checked: list[str]
+    impact: dict[str, Any]
+    value: dict[str, Any]
+    confidence: dict[str, Any]
+    evidence: dict[str, Any]
+    utilization_series: list[dict[str, Any]] = Field(default_factory=list)
+
+
+class ActionStatusUpdate(BaseModel):
+    status: str
 
 
 class AnalysisStatusResponse(BaseModel):
@@ -71,6 +148,12 @@ class OpportunityListItem(BaseModel):
     confidence_score: float
     severity: float
     affected_job_ids: list[str]
+    agent_name: str = ""
+    objective: str | None = None
+    rank: int = 0
+    attributed_monthly_value: float = 0.0
+    resolution: str = "unique"
+    status: str = "awaiting_approval"
 
 
 class OpportunityDetail(BaseModel):
@@ -87,3 +170,11 @@ class OpportunityDetail(BaseModel):
     affected_job_ids: list[str]
     affected_gpu_ids: list[str]
     decision: dict[str, Any]
+    agent_name: str = ""
+    objective: str | None = None
+    recommended_action: str = ""
+    claim: dict[str, Any] = Field(default_factory=dict)
+    attribution: dict[str, Any] = Field(default_factory=dict)
+    candidates_considered: list[dict[str, Any]] = Field(default_factory=list)
+    evidence: dict[str, Any] = Field(default_factory=dict)
+    status: str = "awaiting_approval"

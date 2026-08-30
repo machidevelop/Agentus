@@ -8,7 +8,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from natilah.models.domain import Alternative, ClusterDataset, ClusterStateSnapshot, Job
+from natilah.models.domain import (
+    Alternative,
+    ClusterDataset,
+    ClusterStateSnapshot,
+    Job,
+    gpu_type_matches,
+)
 
 
 @dataclass
@@ -62,7 +68,7 @@ class CounterfactualValidator:
             if required_type:
                 for gid in gpu_ids:
                     gpu = gpus_by_id.get(gid)
-                    if gpu and gpu.gpu_type.name != required_type:
+                    if gpu and not gpu_type_matches(required_type, gpu.gpu_type.name):
                         violations.append(
                             f"GPU {gid} is {gpu.gpu_type.name}, job requires {required_type}"
                         )

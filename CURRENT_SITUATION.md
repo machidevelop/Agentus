@@ -25,28 +25,31 @@ It does not replace the scheduler. It does not execute actions. It observes, mea
 [State Reconstructor]           state_reconstructor.py
      │  replays timeline, builds ClusterStateSnapshot per decision point
      ▼
-[Opportunity Detectors]         opportunity_detector.py → DetectorRegistry
-     │  4 detectors emit Observations (signals, not fixes)
+[Signal Detectors]              opportunity_detector.py → 5 detectors
+     │  emit Observations (signals, not fixes)
      ▼
-[Counterfactual Engine]         counterfactual.py + agents/tools.py
-     │  agent calls read-only tools, proposes feasible alternative Y
-     │  CounterfactualValidator checks hard constraints
+[Specialized Agents]            agents/*.py — one per optimization objective
+     │  idle_allocation | over_allocation | queue_efficiency | fragmentation_placement
+     │
+     │  per observed decision X, each agent runs the same loop (base_agent.py):
+     │    1. reconstruct state at the decision timestamp
+     │    2. investigate with read-only tools (agents/toolbox.py, 14 tools)
+     │    3. draft MULTIPLE candidate alternatives Y (tools + optional LLM)
+     │    4. validate each Y deterministically (counterfactual.py + agent checks)
+     │    5. simulate each surviving Y (comparator.py)
+     │    6. price each Y from an explicit ResourceClaim (value_calculator.py)
+     │    7. score confidence (confidence.py + history.py recurrence)
+     │    8. select the highest-value feasible Y; keep rejects as evidence
      ▼
-[Comparator]                    comparator.py
-     │  computes MetricsDelta: GPU-hours saved, queue time reduction, etc.
+[Coordination Layer]            agents/coordinator.py + engine/claim.py
+     │  deduplicates overlapping GPU-hours (interval union per GPU)
+     │  resolves conflicting actions on the same job or waiting job
+     │  ranks everything by expected monthly value → CoordinationReport
      ▼
-[Value Calculator]              value_calculator.py
-     │  applies EconomicConfig (cost/GPU-hour, facility multiplier)
-     │  produces ValueEstimate with monthly/annual projections
-     ▼
-[Confidence Scorer]             confidence.py
-     │  scores 0–1 across constraint checks + uncertainty sources
-     │  outputs ConfidenceLevel: high / medium / low
-     ▼
-[Finding]                       domain.py → Finding model
+[Finding]                       domain.py → Finding + ResourceClaim + Attribution
      │  persisted to SQLite via save_findings()
      ▼
-[API / Dashboard]               api/ → dashboard/
+[API / Dashboard]               api/ (incl. /api/actions) → dashboard/
 ```
 
 ### 2.2 Core Python modules
@@ -62,9 +65,19 @@ It does not replace the scheduler. It does not execute actions. It observes, mea
 | `natilah/engine/comparator.py` | MetricsDelta computation between actual vs alternative |
 | `natilah/engine/value_calculator.py` | GPU-hour → $ conversion with facility multiplier |
 | `natilah/engine/confidence.py` | Multi-factor confidence scoring |
-| `natilah/agents/gpu_allocation_agent.py` | V1 agent: orchestrates full pipeline per observation |
-| `natilah/agents/tools.py` | Read-only probe tools the agent calls |
-| `natilah/agents/llm.py` | Optional Grok integration (agent_mode: hybrid) |
+| `natilah/agents/base_agent.py` | `SpecializedAgent`: shared candidate ladder and output contract |
+| `natilah/agents/idle_allocation_agent.py` | Objective: GPUs held that did no work |
+| `natilah/agents/over_allocation_agent.py` | Objective: jobs sized above their own peak demand |
+| `natilah/agents/queue_efficiency_agent.py` | Objective: waits that usable capacity would have removed |
+| `natilah/agents/fragmentation_agent.py` | Objective: capacity unusable because of placement |
+| `natilah/agents/coordinator.py` | Dedup, conflict resolution, cross-agent ranking |
+| `natilah/agents/toolbox.py` | 14 read-only investigation tools + LLM-selectable registry |
+| `natilah/agents/claims.py` | Resource claims: which GPU-hours a finding may charge for |
+| `natilah/engine/claim.py` | GPU-hour ledger (interval union per GPU, queue cap per job) |
+| `natilah/engine/history.py` | Recurrence of a signal per job family and user |
+| `natilah/agents/gpu_allocation_agent.py` | V1 compatibility wrapper over the coordinator |
+| `natilah/agents/tools.py` | Read-only probe tools the agents call |
+| `natilah/agents/llm.py` | Optional Grok: tool selection + candidate drafting only |
 | `natilah/ingestion/alibaba_trace.py` | Alibaba Open Cluster 2023 + V2026 trace connectors |
 | `natilah/ingestion/slurm.py` | Read-only Slurm connector (squeue/sinfo/sacct) |
 | `natilah/ingestion/kubernetes.py` | Read-only K8s connector (pod/node/metrics-server) |
@@ -100,6 +113,63 @@ Each finding gets a `ConfidenceAssessment` (score 0–1):
 - **Low (<0.6)**: Constraint violations or significant data gaps
 
 Constraints checked per finding: `gpu_identity`, `node_identity`, `queued_job_exists`, `gpu_architecture_compatibility`, `gpu_count_matches_ids`.
+
+### 2.5b Specialized agent layer
+
+| Agent | Objective | Signals | Candidate alternatives it drafts | What it claims |
+|---|---|---|---|---|
+| `idle_allocation_agent` | GPUs held without work | `idle_allocation` | release all, release only dead GPUs, hold a single GPU, release at the last active sample | dead GPU-hours over the hold window |
+| `over_allocation_agent` | Jobs larger than their peak | `over_allocation` | sizes from a headroom ladder (10/20/35%), peak concurrency, active subset | released GPU-hours over the runtime |
+| `queue_efficiency_agent` | Waits that capacity would have removed | `queue_inefficiency` | start at submit on idle capacity, reclaim unused GPUs from up to two blockers | wait-window GPU-hours + queue seconds |
+| `fragmentation_placement_agent` | Capacity unusable where it sat | `fragmentation`, `poor_placement` | pack a split job onto one node, relocate a small job to rebuild a block, spread a job with no locality constraint | GPU-hours a named waiting job would have used |
+
+Shared output contract (`Finding`): observed decision X, selected alternative Y,
+every candidate considered with its outcome and violations, constraints checked,
+`ResourceClaim` (GPU intervals + queue seconds), `ValueEstimate`, `ComparisonResult`,
+`ConfidenceAssessment`, evidence pack, engineer-facing `recommended_action`,
+and the coordinator's `Attribution`.
+
+Guardrails that make a finding cheap to trust:
+
+- Value is priced from the claim, never from a generic delta, so pricing and
+  deduplication use one number.
+- A claim above what the decision could physically release is rejected
+  (`claim_cap_gpu_hours`).
+- Queue and fragmentation claims are truncated to the window in which the
+  capacity actually stayed free.
+- Reclaiming GPUs from a higher-priority job is a violation, not a finding.
+- Fragmentation value requires a named waiting job that could have consumed the
+  freed capacity; rearrangement alone recovers nothing.
+
+Role of the LLM (`agents/llm.py`, active only when `XAI_API_KEY` is set): it
+selects which read-only tools to run next and drafts extra candidate
+alternatives from the evidence. It does not simulate the cluster, price a
+finding, or decide feasibility, and every candidate it returns goes through the
+same deterministic validation as a tool-drafted one.
+
+### 2.5c Coordination layer
+
+1. **Conflicts.** Two findings mutating the same job, or promising to start the
+   same waiting job, cannot both be applied. The higher expected-value one wins;
+   the other is kept with `resolution=superseded` and `superseded_by`.
+2. **Deduplication.** A ledger holds an interval union per GPU and a per-job
+   queue-second cap. Each finding is credited only with hours nobody above it
+   claimed; value scales by the surviving fraction. Fully absorbed findings
+   become `fully_deduplicated`.
+3. **Ranking.** Survivors are ranked by attributed monthly value x confidence.
+
+`CoordinationReport` records claimed versus credited GPU-hours and value,
+conflicts resolved, duplicate hours removed, and per-agent statistics.
+
+### 2.5d Agent API surface
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/analysis/run` | Run all agents + coordination; returns the report |
+| `GET /api/actions?limit=N` | Top N ranked, deduplicated, validated actions |
+| `GET /api/actions/{id}` | Full record: claim, candidates, evidence, attribution |
+| `POST /api/actions/{id}/status` | Record human approval or dismissal (no execution) |
+| `GET /api/agents` | Agents, objectives, signals, whether LLM is enabled |
 
 ### 2.6 Safety model
 
@@ -211,6 +281,25 @@ good sign — not hallucinating waste.
 Verdict assignment: `LIKELY_VALID` = confidence ≥0.8, `REVIEW` = confidence 0.6–0.8.
 
 ---
+
+### 3.4 GPU-type alias bug (fixed 2026-08-30)
+
+Feasibility checks compared GPU-type strings directly. Traces record what a user
+requested (`A100`) while the catalog records what the node has (`A100-80GB`), so
+on Alibaba data every type-sensitive check failed: placement options, queue
+capacity matching, and the validator's architecture check. On a 2,000-job
+A100 slice this suppressed the over-allocation, queue, and fragmentation agents
+entirely (0 findings; 100% of candidates rejected).
+
+`gpu_type_matches()` in `models/domain.py` now resolves both sides through the
+alias table, and it is used by the detectors, the counterfactual validator, the
+agent tools, and all four agents. After the fix the same slice yields findings
+from all four agents.
+
+The validation numbers in section 3 predate this fix and were produced by the
+standalone pipeline in `scripts/validate_alibaba.py`, which shares the affected
+detectors and validator. They understate placement- and queue-related findings
+and should be regenerated before being quoted again.
 
 ## 4. Data Sources
 
@@ -344,7 +433,10 @@ Dev server: http://localhost:3000
 
 ## 6. Next Steps (per validation plan)
 
-Per the agreed validation-first rule: **no new features, agents, domains, or UI additions until validation passes**.
+The specialized agent layer and coordination layer were built on request
+(2026-08-30). The validation-first rule still governs everything else: **no new
+domains or UI additions until real-cluster validation passes**, and the review
+below is now performed against the ranked actions from `GET /api/actions`.
 
 1. **Capture real data** — 7–30 days of real K8s or Slurm cluster telemetry using the built connectors
 2. **Run full pipeline** on real data (not Alibaba synthetic trace)

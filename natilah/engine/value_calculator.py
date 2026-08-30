@@ -40,10 +40,17 @@ class ValueCalculator:
         observation: Observation,
         dataset: ClusterDataset,
         analysis_hours: float | None = None,
+        gpu_hours_override: float | None = None,
+        extra_assumptions: list[str] | None = None,
     ) -> ValueEstimate:
         gpu_type = self._gpu_type(observation, dataset)
         rate = self.config.cost_per_gpu_hour.get(gpu_type, min(self.config.cost_per_gpu_hour.values() or [2.21]))
         gpu_hours = comparison.delta.gpu_hours_saved
+        if gpu_hours_override is not None and gpu_hours_override > 0:
+            # A specialized agent priced its own claim: exactly which GPUs, for
+            # exactly how long. That claim is what the coordination layer
+            # deduplicates, so value must be computed from the same number.
+            gpu_hours = gpu_hours_override
         # Queue-time recovery also implies GPU-hours that could have been used.
         if gpu_hours <= 0 and comparison.delta.queue_time_reduction > 0:
             job = dataset.job_by_id().get(observation.decision.job_id)
@@ -75,6 +82,14 @@ class ValueCalculator:
             f"Facility multiplier {self.config.facility_cost_multiplier} is recorded but not applied to the headline compute-cost figure.",
             "No production change is implied or performed.",
         ]
+        if gpu_hours_override is not None and gpu_hours_override > 0:
+            assumptions.insert(
+                1,
+                f"GPU-hours come from the agent's explicit resource claim ({gpu_hours:.2f} GPU-h), "
+                "not from the generic comparator delta.",
+            )
+        if extra_assumptions:
+            assumptions.extend(extra_assumptions)
         return ValueEstimate(
             gpu_hours_recovered=gpu_hours,
             compute_cost_avoided=compute_cost,

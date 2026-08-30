@@ -333,7 +333,7 @@ class OpenB2023Connector:
                 other_nodes = [
                     n for n in nodes
                     if n.node_id != assigned_nodes[0]
-                    and (not job.requested_gpu_type or node_type[n.node_id] == job.requested_gpu_type)
+                    and gpu_type_matches(job.requested_gpu_type, node_type[n.node_id])
                 ]
                 if other_nodes and len(gpus_by_node.get(other_nodes[0].node_id, [])) > 0:
                     split_node = other_nodes[h % len(other_nodes)]

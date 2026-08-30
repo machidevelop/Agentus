@@ -302,5 +302,11 @@ async def test_slurm_ingest_and_analyze(slurm_session: AsyncSession):
     for f in findings:
         assert f.value.estimated_monthly_value >= 0
         assert f.confidence.score > 0
-        assert f.alternative.agent_name == "gpu_allocation"
+        assert f.alternative.agent_name == f.agent_name
+        assert f.agent_name in {
+            "idle_allocation_agent",
+            "over_allocation_agent",
+            "queue_efficiency_agent",
+            "fragmentation_placement_agent",
+        }
         assert len(f.alternative.constraints_satisfied) > 0

@@ -151,6 +151,21 @@ class OpportunityModel(Base):
     monthly_value: Mapped[float] = mapped_column(Float, nullable=False, index=True)
     annual_value: Mapped[float] = mapped_column(Float, nullable=False)
 
+    # Specialized-agent and coordination-layer columns
+    agent_name: Mapped[str] = mapped_column(String, default="", index=True)
+    objective: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
+    recommended_action: Mapped[str] = mapped_column(Text, default="")
+    claim: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    candidates_considered: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    evidence: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    selection_score: Mapped[float] = mapped_column(Float, default=0.0)
+    attribution: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    status: Mapped[str] = mapped_column(String, default="awaiting_approval", index=True)
+    rank: Mapped[int] = mapped_column(Integer, default=0, index=True)
+    resolution: Mapped[str] = mapped_column(String, default="unique", index=True)
+    attributed_monthly_value: Mapped[float] = mapped_column(Float, default=0.0, index=True)
+    expected_monthly_value: Mapped[float] = mapped_column(Float, default=0.0)
+
 
 class CostConfigModel(Base):
     __tablename__ = "cost_config"
@@ -172,6 +187,7 @@ class AnalysisRunModel(Base):
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     opportunities_found: Mapped[int] = mapped_column(Integer, default=0)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    report: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
 
 
 _engine: AsyncEngine | None = None
@@ -212,10 +228,46 @@ def get_session_factory() -> async_sessionmaker[AsyncSession]:
     return _session_factory
 
 
+# Columns added after the V1 schema shipped. SQLite has no migration tool here,
+# so an existing database is widened in place instead of being thrown away.
+_ADDED_COLUMNS: dict[str, dict[str, str]] = {
+    "opportunities": {
+        "agent_name": "VARCHAR DEFAULT ''",
+        "objective": "VARCHAR",
+        "recommended_action": "TEXT DEFAULT ''",
+        "claim": "JSON",
+        "candidates_considered": "JSON",
+        "evidence": "JSON",
+        "selection_score": "FLOAT DEFAULT 0.0",
+        "attribution": "JSON",
+        "status": "VARCHAR DEFAULT 'awaiting_approval'",
+        "rank": "INTEGER DEFAULT 0",
+        "resolution": "VARCHAR DEFAULT 'unique'",
+        "attributed_monthly_value": "FLOAT DEFAULT 0.0",
+        "expected_monthly_value": "FLOAT DEFAULT 0.0",
+    },
+    "analysis_runs": {"report": "JSON"},
+}
+
+
+async def _add_missing_columns(conn) -> None:
+    for table, columns in _ADDED_COLUMNS.items():
+        result = await conn.exec_driver_sql(f"PRAGMA table_info({table})")
+        existing = {row[1] for row in result.fetchall()}
+        if not existing:
+            continue
+        for name, ddl in columns.items():
+            if name in existing:
+                continue
+            await conn.exec_driver_sql(f'ALTER TABLE {table} ADD COLUMN "{name}" {ddl}')
+
+
 async def init_db(database_url: str | None = None) -> None:
     engine = configure_engine(database_url) if database_url else get_engine()
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        if engine.dialect.name == "sqlite":
+            await _add_missing_columns(conn)
 
 
 async def reset_db() -> None:
@@ -490,11 +542,53 @@ async def save_findings(session: AsyncSession, findings: list[Finding]) -> None:
                 utilization_series=[p.model_dump(mode="json") for p in f.utilization_series],
                 monthly_value=f.value.estimated_monthly_value,
                 annual_value=f.value.estimated_annual_value,
+                agent_name=f.agent_name,
+                objective=f.objective.value if f.objective else None,
+                recommended_action=f.recommended_action,
+                claim=f.claim.model_dump(mode="json"),
+                candidates_considered=[c.model_dump(mode="json") for c in f.candidates_considered],
+                evidence=f.evidence,
+                selection_score=f.selection_score,
+                attribution=f.attribution.model_dump(mode="json"),
+                status=f.status.value,
+                rank=f.attribution.rank,
+                resolution=f.attribution.resolution.value,
+                attributed_monthly_value=f.attribution.attributed_monthly_value,
+                expected_monthly_value=f.attribution.expected_monthly_value,
             )
             for f in findings
         ]
     )
     await session.commit()
+
+
+def _row_to_finding(row: OpportunityModel) -> Finding:
+    payload = {
+        "opportunity_id": row.opportunity_id,
+        "opportunity_type": OpportunityType(row.opportunity_type),
+        "decision": row.decision,
+        "severity": row.severity,
+        "title": row.title,
+        "description": row.description,
+        "detected_at": row.detected_at,
+        "affected_job_ids": row.affected_job_ids or [],
+        "affected_gpu_ids": row.affected_gpu_ids or [],
+        "alternative": row.alternative,
+        "comparison": row.comparison,
+        "value": row.value,
+        "confidence": row.confidence,
+        "utilization_series": row.utilization_series or [],
+        "agent_name": row.agent_name or "",
+        "objective": row.objective,
+        "recommended_action": row.recommended_action or "",
+        "claim": row.claim or {},
+        "candidates_considered": row.candidates_considered or [],
+        "evidence": row.evidence or {},
+        "selection_score": row.selection_score or 0.0,
+        "attribution": row.attribution or {},
+        "status": row.status or "awaiting_approval",
+    }
+    return Finding.model_validate(payload)
 
 
 async def load_findings(session: AsyncSession) -> list[Finding]:
@@ -503,38 +597,49 @@ async def load_findings(session: AsyncSession) -> list[Finding]:
         .scalars()
         .all()
     )
-    findings: list[Finding] = []
-    for row in rows:
-        payload = {
-            "opportunity_id": row.opportunity_id,
-            "opportunity_type": OpportunityType(row.opportunity_type),
-            "decision": row.decision,
-            "severity": row.severity,
-            "title": row.title,
-            "description": row.description,
-            "detected_at": row.detected_at,
-            "affected_job_ids": row.affected_job_ids or [],
-            "affected_gpu_ids": row.affected_gpu_ids or [],
-            "alternative": row.alternative,
-            "comparison": row.comparison,
-            "value": row.value,
-            "confidence": row.confidence,
-            "utilization_series": row.utilization_series or [],
-        }
-        findings.append(Finding.model_validate(payload))
-    return findings
+    return [_row_to_finding(row) for row in rows]
 
 
 async def load_finding(session: AsyncSession, opportunity_id: str) -> Finding | None:
     row = await session.get(OpportunityModel, opportunity_id)
-    if row is None:
-        return None
-    all_findings = await load_findings(session)
-    return next((f for f in all_findings if f.opportunity_id == opportunity_id), None)
+    return None if row is None else _row_to_finding(row)
 
 
 async def get_cost_config_row(session: AsyncSession) -> CostConfigModel | None:
     return await session.get(CostConfigModel, 1)
+
+
+async def load_ranked_findings(session: AsyncSession, limit: int = 10) -> list[Finding]:
+    """Top coordinated actions: conflict-free, deduplicated, ranked by value."""
+    rows = (
+        (
+            await session.execute(
+                select(OpportunityModel)
+                .where(OpportunityModel.rank > 0)
+                .where(OpportunityModel.resolution.in_(["unique", "deduplicated"]))
+                .order_by(OpportunityModel.rank.asc())
+                .limit(limit)
+            )
+        )
+        .scalars()
+        .all()
+    )
+    return [_row_to_finding(row) for row in rows]
+
+
+async def set_finding_status(
+    session: AsyncSession,
+    opportunity_id: str,
+    status: str,
+) -> OpportunityModel | None:
+    """Record a human decision on a finding. Nothing is executed either way."""
+    row = await session.get(OpportunityModel, opportunity_id)
+    if row is None:
+        return None
+    row.status = status
+    await session.commit()
+    await session.refresh(row)
+    return row
 
 
 async def upsert_cost_config(session: AsyncSession, payload: dict[str, Any]) -> CostConfigModel:

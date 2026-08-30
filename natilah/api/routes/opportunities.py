@@ -29,6 +29,12 @@ async def list_opportunities(session: AsyncSession = Depends(get_db_session)) ->
             confidence_score=float((r.confidence or {}).get("score") or 0.0),
             severity=r.severity,
             affected_job_ids=r.affected_job_ids or [],
+            agent_name=r.agent_name or "",
+            objective=r.objective,
+            rank=r.rank or 0,
+            attributed_monthly_value=r.attributed_monthly_value or 0.0,
+            resolution=r.resolution or "unique",
+            status=r.status or "awaiting_approval",
         )
         for r in rows
     ]
@@ -64,4 +70,12 @@ async def get_opportunity(
         affected_job_ids=finding.affected_job_ids,
         affected_gpu_ids=finding.affected_gpu_ids,
         decision=finding.decision.model_dump(mode="json"),
+        agent_name=finding.agent_name,
+        objective=finding.objective.value if finding.objective else None,
+        recommended_action=finding.recommended_action,
+        claim=finding.claim.model_dump(mode="json"),
+        attribution=finding.attribution.model_dump(mode="json"),
+        candidates_considered=[c.model_dump(mode="json") for c in finding.candidates_considered],
+        evidence=finding.evidence,
+        status=finding.status.value,
     )

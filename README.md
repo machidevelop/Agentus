@@ -24,12 +24,33 @@ uvicorn natilah.api.app:app --port 8000
 ## Architecture
 
 ```
-Data Ingestion → Normalized Model → State Reconstructor → Opportunity Detectors
-→ Counterfactual Validator → Comparator → Value Calculator → Confidence Scorer
+Data Ingestion → Normalized Model → State Reconstructor → Signal Detectors
+→ Specialized Agents (one per optimization objective)
+     idle allocation | over-allocation | queue efficiency | fragmentation & placement
+   each: investigate with read-only tools → draft multiple alternatives Y
+         → validate each deterministically → simulate → price from an explicit
+           GPU-hour claim → score confidence → keep the highest-value feasible Y
+→ Coordination Layer (deduplicate GPU-hours, resolve conflicts, rank by value)
 → REST API → Dashboard
 ```
 
-**Agent mode:** Hybrid (tool-synthesized candidates + optional LLM reasoning via xAI when `XAI_API_KEY` is set).
+Every agent emits the same structured record: the observed decision X, the
+alternatives Y it considered (including the rejected ones and why), the
+constraints checked, GPU-hours recovered, queue and utilization impact,
+financial value, a confidence score, and the supporting evidence.
+
+The coordination layer credits each GPU-hour once, drops actions that
+contradict a higher-value one, and ranks what remains by expected monthly
+value. `GET /api/actions` returns the top independently validated actions.
+
+**Agent mode:** Hybrid. Deterministic tools always run; when `XAI_API_KEY` is
+set the LLM additionally selects tools to investigate with and drafts extra
+candidate alternatives. It never simulates the cluster, prices a finding, or
+decides feasibility — every candidate it returns is re-validated against
+reconstructed state.
+
+**Execution:** always human-approved. `POST /api/actions/{id}/status` records an
+engineer's decision; Natilah performs no infrastructure change.
 
 ## Configuration
 
@@ -52,8 +73,12 @@ pytest tests/ -v
 ## Project Status
 
 - **V1 MVP:** Complete. Synthetic data demo works end-to-end.
-- **Next milestone:** Read-only Slurm connector for real cluster history (7+ days).
-- **Out of scope (V1):** Authentication, export, autonomous execution, energy agents.
+- **Specialized agents + coordination layer:** Complete. Four objective-specific
+  agents, deterministic validation per candidate, GPU-hour deduplication and
+  conflict resolution across agents, ranked actions API.
+- **Next milestone:** Run the pipeline on 7+ days of real Slurm or Kubernetes
+  telemetry and have an engineer review the top 20 actions.
+- **Out of scope:** Authentication, export, autonomous execution, energy agents.
 
 ## Safety
 

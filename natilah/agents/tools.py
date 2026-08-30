@@ -10,7 +10,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from statistics import mean
 
-from natilah.models.domain import ClusterDataset, ClusterStateSnapshot, Job, NodeCapacity
+from natilah.models.domain import (
+    ClusterDataset,
+    ClusterStateSnapshot,
+    Job,
+    NodeCapacity,
+    gpu_type_matches,
+)
 
 
 @dataclass
@@ -35,7 +41,7 @@ class ToolCandidate:
 
 
 def inspect_utilization(dataset: ClusterDataset, job_id: str) -> UtilizationReport | None:
-    samples = [s for s in dataset.samples if s.job_id == job_id]
+    samples = dataset.samples_for_job(job_id)
     alloc = dataset.allocation_by_job().get(job_id)
     if not alloc:
         return None
@@ -72,7 +78,7 @@ def list_idle_capacity(
     for cap in state.available_capacity.by_node.values():
         if cap.idle_gpus < min_gpus:
             continue
-        if gpu_type and cap.gpu_type != gpu_type:
+        if not gpu_type_matches(gpu_type, cap.gpu_type):
             continue
         out.append(cap)
     out.sort(key=lambda c: c.idle_gpus, reverse=True)
@@ -118,7 +124,7 @@ def probe_headroom_size(report: UtilizationReport, headroom: float = 0.20) -> To
 
 def first_fit_node(job: Job, state: ClusterStateSnapshot, needed: int) -> NodeCapacity | None:
     for cap in state.available_capacity.by_node.values():
-        if job.requested_gpu_type and cap.gpu_type != job.requested_gpu_type:
+        if not gpu_type_matches(job.requested_gpu_type, cap.gpu_type):
             continue
         if cap.idle_gpus >= needed:
             return cap
@@ -130,7 +136,7 @@ def best_fit_decreasing_node(job: Job, state: ClusterStateSnapshot, needed: int)
     fits = [
         cap
         for cap in state.available_capacity.by_node.values()
-        if cap.idle_gpus >= needed and (not job.requested_gpu_type or cap.gpu_type == job.requested_gpu_type)
+        if cap.idle_gpus >= needed and gpu_type_matches(job.requested_gpu_type, cap.gpu_type)
     ]
     if not fits:
         return None

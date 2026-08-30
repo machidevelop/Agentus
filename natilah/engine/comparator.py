@@ -66,7 +66,7 @@ class Comparator:
         elif alloc and alloc.end_time:
             duration_h = (alloc.end_time - alloc.start_time).total_seconds() / 3600.0
 
-        samples = [s for s in dataset.samples if s.job_id == primary_id]
+        samples = dataset.samples_for_job(primary_id)
         actual_util = mean(s.gpu_utilization_pct for s in samples) if samples else 0.0
         actual_mem = mean(s.memory_utilization_pct for s in samples) if samples else 0.0
         idle_threshold = 5.0

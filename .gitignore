@@ -7,6 +7,8 @@ htmlcov/
 .env
 data/*.db
 data/*.db-journal
+data/alibaba_trace_2023/
+data/alibaba_trace_2026/
 .venv/
 venv/
 dist/

@@ -9,7 +9,12 @@ from statistics import mean
 from uuid import uuid4
 
 from natilah.engine.state_reconstructor import ClusterStateReconstructor
-from natilah.models.domain import ClusterDataset, Observation, SchedulerDecision
+from natilah.models.domain import (
+    ClusterDataset,
+    Observation,
+    SchedulerDecision,
+    gpu_type_matches,
+)
 from natilah.models.enums import DecisionType, OpportunityType
 
 
@@ -110,7 +115,7 @@ class PlacementDetector(SignalDetector):
             single_node_options = [
                 cap
                 for cap in state.available_capacity.by_node.values()
-                if cap.idle_gpus >= needed and (gpu_type is None or cap.gpu_type == gpu_type)
+                if cap.idle_gpus >= needed and gpu_type_matches(gpu_type, cap.gpu_type)
             ]
             if not single_node_options:
                 continue
@@ -192,7 +197,7 @@ class FragmentationDetector(SignalDetector):
                     affected_job_ids=[pending_8[0].job_id] + [
                         jid
                         for cap in affected_nodes
-                        for ns in state.nodes
+                        for ns in state.node_states()
                         if ns.node.node_id == cap.node_id
                         for jid in ns.running_job_ids
                     ],
@@ -268,7 +273,7 @@ class QueueInefficiencyDetector(SignalDetector):
             gpu_type = job.requested_gpu_type
             free_matching = 0
             for cap in state.available_capacity.by_node.values():
-                if gpu_type is None or cap.gpu_type == gpu_type:
+                if gpu_type_matches(gpu_type, cap.gpu_type):
                     free_matching += cap.idle_gpus
 
             # Also look at running jobs that were holding more GPUs than they used.
@@ -277,7 +282,7 @@ class QueueInefficiencyDetector(SignalDetector):
                 alloc = alloc_by_job.get(running.job_id)
                 if alloc is None:
                     continue
-                samples = [s for s in dataset.samples if s.job_id == running.job_id]
+                samples = dataset.samples_for_job(running.job_id)
                 if not samples:
                     continue
                 by_gpu: dict[str, list[float]] = defaultdict(list)
@@ -288,7 +293,7 @@ class QueueInefficiencyDetector(SignalDetector):
                     continue
                 active = sum(1 for vals in by_gpu.values() if mean(vals) > 40.0)
                 unused = len(alloc.gpu_ids) - active
-                if unused >= job.requested_gpus and (gpu_type is None or running.requested_gpu_type == gpu_type):
+                if unused >= job.requested_gpus and gpu_type_matches(gpu_type, running.requested_gpu_type):
                     blocking.append(
                         {
                             "job_id": running.job_id,
