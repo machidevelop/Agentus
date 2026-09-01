@@ -3,13 +3,7 @@ import { Ellipsis } from "lucide-react";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const findings = [
-  { type: "idle_allocation", count: "4,540", avgValue: "$96/finding", recovery: "51.0%" },
-  { type: "queue_inefficiency", count: "394", avgValue: "$328/finding", recovery: "69.1%" },
-  { type: "fragmentation", count: "327", avgValue: "$45/finding", recovery: "31.2%" },
-  { type: "over_allocation", count: "263", avgValue: "$256/finding", recovery: "44.8%" },
-  { type: "mixed (5k)", count: "2,558", avgValue: "$209/finding", recovery: "59.3%" },
-];
+const findings: { type: string; count: string; avgValue: string; recovery: string }[] = [];
 
 export function TopFindings() {
   return (

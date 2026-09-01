@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/chart";
 
 const data = [
-  { type: "Idle Allocation", count: 2088 },
-  { type: "Queue Inefficiency", count: 269 },
-  { type: "Over-Allocation", count: 168 },
-  { type: "Fragmentation", count: 33 },
+  { type: "Idle Allocation", count: 0 },
+  { type: "Queue Inefficiency", count: 0 },
+  { type: "Over-Allocation", count: 0 },
+  { type: "Fragmentation", count: 0 },
 ];
 
 const chartConfig = {
@@ -29,7 +29,7 @@ export function FindingsChart() {
     <Card>
       <CardHeader>
         <CardTitle>Findings by Type</CardTitle>
-        <CardDescription>Distribution of waste findings across 5,000 jobs (43.3h window)</CardDescription>
+        <CardDescription>Distribution of waste findings across all monitored jobs</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="aspect-auto h-64 w-full">

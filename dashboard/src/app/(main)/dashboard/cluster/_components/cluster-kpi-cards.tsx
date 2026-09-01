@@ -23,17 +23,17 @@ export function ClusterKpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">256</span>
+              <span className="text-3xl leading-none tracking-tight">0</span>
               <Badge
                 variant="outline"
                 className="border-green-200 bg-green-500/10 text-green-700 dark:border-green-900/40 dark:bg-green-500/15 dark:text-green-300"
               >
                 <TrendingUp />
-                +12
+                0
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">244</span>{" "}
+              <span className="font-medium text-foreground">0</span>{" "}
               <span className="text-muted-foreground">active last scan</span>
             </p>
           </CardContent>
@@ -48,14 +48,14 @@ export function ClusterKpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">144</span>
+              <span className="text-3xl leading-none tracking-tight">0</span>
               <Badge variant="outline" className="border-destructive/20 bg-destructive/10 text-destructive">
                 <TrendingDown />
-                -8
+                0
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">152</span>{" "}
+              <span className="font-medium text-foreground">0</span>{" "}
               <span className="text-muted-foreground">idle last scan</span>
             </p>
           </CardContent>
@@ -70,17 +70,17 @@ export function ClusterKpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">42.3%</span>
+              <span className="text-3xl leading-none tracking-tight">0%</span>
               <Badge
                 variant="outline"
                 className="border-green-200 bg-green-500/10 text-green-700 dark:border-green-900/40 dark:bg-green-500/15 dark:text-green-300"
               >
                 <TrendingUp />
-                +3.1pp
+                0
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">39.2%</span>{" "}
+              <span className="font-medium text-foreground">0%</span>{" "}
               <span className="text-muted-foreground">last week</span>
             </p>
           </CardContent>
@@ -95,17 +95,17 @@ export function ClusterKpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">$535k</span>
+              <span className="text-3xl leading-none tracking-tight">$0</span>
               <Badge
                 variant="outline"
                 className="border-green-200 bg-green-500/10 text-green-700 dark:border-green-900/40 dark:bg-green-500/15 dark:text-green-300"
               >
                 <TrendingUp />
-                +$128k
+                $0
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">$407k</span>{" "}
+              <span className="font-medium text-foreground">$0</span>{" "}
               <span className="text-muted-foreground">prev run</span>
             </p>
           </CardContent>

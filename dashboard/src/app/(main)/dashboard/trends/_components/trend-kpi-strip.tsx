@@ -14,13 +14,13 @@ export function TrendKpiStrip() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">61.3%</div>
+              <div className="text-2xl leading-none tracking-tight">0%</div>
               <Badge className="bg-destructive/10 text-destructive">
-                <ArrowDownRight />2.1%
+                <ArrowDownRight />0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">63.4%</span></span>
+              <span>from <span className="text-foreground">0%</span></span>
               <span>•</span>
               <span>last 4 weeks</span>
             </div>
@@ -33,13 +33,13 @@ export function TrendKpiStrip() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">85.3</div>
+              <div className="text-2xl leading-none tracking-tight">0</div>
               <Badge className="bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300">
-                <ArrowUpRight />12.4%
+                <ArrowUpRight />0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">75.9</span></span>
+              <span>from <span className="text-foreground">0</span></span>
               <span>•</span>
               <span>last 4 weeks</span>
             </div>
@@ -52,13 +52,13 @@ export function TrendKpiStrip() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">802 min</div>
+              <div className="text-2xl leading-none tracking-tight">0 min</div>
               <Badge className="bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300">
-                <ArrowDownRight />6.7%
+                <ArrowDownRight />0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">860 min</span></span>
+              <span>from <span className="text-foreground">0 min</span></span>
               <span>•</span>
               <span>last 4 weeks</span>
             </div>
@@ -71,13 +71,13 @@ export function TrendKpiStrip() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">43.2%</div>
+              <div className="text-2xl leading-none tracking-tight">0%</div>
               <Badge className="bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300">
-                <ArrowUpRight />8.1%
+                <ArrowUpRight />0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">39.9%</span></span>
+              <span>from <span className="text-foreground">0%</span></span>
               <span>•</span>
               <span>last 4 weeks</span>
             </div>
@@ -90,13 +90,13 @@ export function TrendKpiStrip() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">74.5%</div>
+              <div className="text-2xl leading-none tracking-tight">0%</div>
               <Badge className="bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300">
-                <ArrowUpRight />1.8%
+                <ArrowUpRight />0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">73.2%</span></span>
+              <span>from <span className="text-foreground">0%</span></span>
               <span>•</span>
               <span>last 4 weeks</span>
             </div>

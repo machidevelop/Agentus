@@ -20,13 +20,13 @@ export function KpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">512</span>
+              <span className="text-3xl leading-none tracking-tight">0</span>
               <Badge variant="outline" className="border-green-200 bg-green-500/10 text-green-700 dark:border-green-900/40 dark:bg-green-500/15 dark:text-green-300">
-                <TrendingUp />+64
+                <TrendingUp />0
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">448</span>{" "}
+              <span className="font-medium text-foreground">0</span>{" "}
               <span className="text-muted-foreground">last quarter</span>
             </p>
           </CardContent>
@@ -38,13 +38,13 @@ export function KpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">127</span>
+              <span className="text-3xl leading-none tracking-tight">0</span>
               <Badge variant="outline" className="border-green-200 bg-green-500/10 text-green-700 dark:border-green-900/40 dark:bg-green-500/15 dark:text-green-300">
-                <TrendingUp />+3
+                <TrendingUp />0
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">124</span>{" "}
+              <span className="font-medium text-foreground">0</span>{" "}
               <span className="text-muted-foreground">1 hour ago</span>
             </p>
           </CardContent>
@@ -56,13 +56,13 @@ export function KpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">61.3%</span>
+              <span className="text-3xl leading-none tracking-tight">0%</span>
               <Badge variant="outline" className="border-destructive/20 bg-destructive/10 text-destructive">
-                <TrendingDown />-2.1%
+                <TrendingDown />0%
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">63.4%</span>{" "}
+              <span className="font-medium text-foreground">0%</span>{" "}
               <span className="text-muted-foreground">last week</span>
             </p>
           </CardContent>
@@ -74,13 +74,13 @@ export function KpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">198</span>
+              <span className="text-3xl leading-none tracking-tight">0</span>
               <Badge variant="outline" className="border-destructive/20 bg-destructive/10 text-destructive">
-                <TrendingDown />38.7%
+                <TrendingDown />0%
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">512</span>{" "}
+              <span className="font-medium text-foreground">0</span>{" "}
               <span className="text-muted-foreground">total GPUs</span>
             </p>
           </CardContent>

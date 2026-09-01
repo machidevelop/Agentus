@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-const monthlyValue = 535_185;
-const monthlyTarget = 600_000;
+const monthlyValue = 0;
+const monthlyTarget = 0;
 const valueProgressPercentage = Math.round((monthlyValue / monthlyTarget) * 100);
 const valueGoalBarCount = 42;
 const activeValueBars = Math.round((monthlyValue / monthlyTarget) * valueGoalBarCount);
@@ -16,10 +16,10 @@ const valueGoalBars = Array.from({ length: valueGoalBarCount }, (_, index) => ({
 }));
 
 const wasteSegments = [
-  { label: "Idle Allocation", count: 2088, pct: 81.6, color: "bg-amber-500" },
-  { label: "Queue Inefficiency", count: 269, pct: 10.5, color: "bg-blue-500" },
-  { label: "Over-Allocation", count: 168, pct: 6.6, color: "bg-purple-500" },
-  { label: "Fragmentation", count: 33, pct: 1.3, color: "bg-green-500" },
+  { label: "Idle Allocation", count: 0, pct: 0, color: "bg-amber-500" },
+  { label: "Queue Inefficiency", count: 0, pct: 0, color: "bg-blue-500" },
+  { label: "Over-Allocation", count: 0, pct: 0, color: "bg-purple-500" },
+  { label: "Fragmentation", count: 0, pct: 0, color: "bg-green-500" },
 ];
 
 export function FindingsTimeline() {
@@ -27,7 +27,7 @@ export function FindingsTimeline() {
     <section className="grid grid-cols-1 gap-4 xl:grid-cols-12">
       <Card className="xl:col-span-8">
         <CardHeader>
-          <CardTitle>Waste Distribution (43.3h window)</CardTitle>
+          <CardTitle>Waste Distribution</CardTitle>
           <CardAction>
             <Button variant="outline" size="sm">
               <BarChart2 data-icon="inline-start" />

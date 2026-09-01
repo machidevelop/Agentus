@@ -3,16 +3,9 @@ import { Server } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-const clusters = [
-  { id: 1, name: "aws-us-east-1", spec: "A100×256", costPerMonth: "$89,344/mo" },
-  { id: 2, name: "gcp-europe-west4", spec: "H100×128", costPerMonth: "$104,192/mo" },
-  { id: 3, name: "azure-eastus", spec: "A100×64", costPerMonth: "$22,336/mo" },
-];
+const clusters: { id: number; name: string; spec: string; costPerMonth: string }[] = [];
 
-const reserves = [
-  { id: 1, name: "On-Demand Pool", spec: "32 GPUs", costPerMonth: "$11,168/mo" },
-  { id: 2, name: "Spot Reserve", spec: "16 GPUs", costPerMonth: "Unmetered" },
-];
+const reserves: { id: number; name: string; spec: string; costPerMonth: string }[] = [];
 
 export function GpuWallet() {
   return (

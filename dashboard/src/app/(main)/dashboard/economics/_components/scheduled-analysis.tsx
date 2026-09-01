@@ -2,26 +2,7 @@ import { ClipboardCheck, FileText, RefreshCw, Zap } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const items = [
-  {
-    id: 1,
-    title: "Cluster re-scan",
-    date: "Due in 2h • Automated",
-    icon: RefreshCw,
-  },
-  {
-    id: 2,
-    title: "Weekly validation report",
-    date: "Due Aug 31 • Slurm + K8s",
-    icon: FileText,
-  },
-  {
-    id: 3,
-    title: "Manual review checkpoint",
-    date: "Due Sep 5 • Top 20 findings",
-    icon: ClipboardCheck,
-  },
-];
+const items: { id: number; title: string; date: string; icon: typeof RefreshCw }[] = [];
 
 export function ScheduledAnalysis() {
   return (
@@ -33,17 +14,17 @@ export function ScheduledAnalysis() {
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <h2 className="flex items-baseline text-3xl leading-none tracking-tight">
-              <span className="font-normal">3</span>
+              <span className="font-normal">0</span>
               <span className="text-muted-foreground text-xl ml-2 text-base">upcoming</span>
             </h2>
             <p className="text-muted-foreground text-sm leading-none">
-              Next run analyzes <span className="font-medium text-foreground">50,000</span> jobs
+              Next run analyzes <span className="font-medium text-foreground">0</span> jobs
             </p>
           </div>
           <div className="flex w-max items-center gap-2 rounded-md border border-border bg-muted/70 px-2 py-1.5 text-sm">
             <Zap className="size-4 fill-primary text-primary" />
             <span className="text-muted-foreground">
-              Next automated scan will analyze <span className="font-medium text-foreground">50,000 jobs</span>
+              Next automated scan will analyze <span className="font-medium text-foreground">0 jobs</span>
             </span>
           </div>
         </div>

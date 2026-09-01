@@ -59,6 +59,8 @@ class IdleAllocationAgent(SpecializedAgent):
         job_id = ctx.job.job_id if ctx.job else ""
         hold_hours = (window[1] - window[0]).total_seconds() / 3600.0
 
+        beneficiary = self._backfill_beneficiary(evidence)
+
         if dead and not active:
             action = {
                 "kind": "release_gpus",
@@ -67,6 +69,8 @@ class IdleAllocationAgent(SpecializedAgent):
                 "original_gpu_count": len(allocated),
             }
             attach_claim(action, allocated, window, "whole allocation idle for the full hold")
+            if beneficiary:
+                action["backfill_job_id"] = beneficiary["job_id"]
             proposals.append(
                 CandidateProposal(
                     kind="release_gpus",
@@ -78,6 +82,7 @@ class IdleAllocationAgent(SpecializedAgent):
                     rationale=(
                         "Per-GPU telemetry shows no GPU in the allocation crossed the idle "
                         "threshold at any sample during the hold."
+                        + self._beneficiary_clause(beneficiary)
                     ),
                     source="tool:probe_release_idle_gpus",
                     tools_invoked=list(ctx.tools_invoked or []),
@@ -92,6 +97,8 @@ class IdleAllocationAgent(SpecializedAgent):
                 "original_gpu_count": len(allocated),
             }
             attach_claim(action, dead, window, "GPUs in the allocation that never left idle")
+            if beneficiary:
+                action["backfill_job_id"] = beneficiary["job_id"]
             proposals.append(
                 CandidateProposal(
                     kind="release_gpus",
@@ -103,6 +110,7 @@ class IdleAllocationAgent(SpecializedAgent):
                     rationale=(
                         f"{len(dead)} of {len(allocated)} GPUs stayed below {IDLE_PCT:.0f}% for the "
                         "whole hold while the rest carried the work."
+                        + self._beneficiary_clause(beneficiary)
                     ),
                     source="tool:probe_release_idle_gpus:subset",
                     tools_invoked=list(ctx.tools_invoked or []),
@@ -166,6 +174,19 @@ class IdleAllocationAgent(SpecializedAgent):
                 )
             )
         return proposals
+
+    def _backfill_beneficiary(self, evidence: dict) -> dict | None:
+        backfill = (evidence.get("tools") or {}).get("probe_backfill_candidates") or {}
+        candidates = backfill.get("backfill_candidates") or []
+        return candidates[0] if candidates else None
+
+    def _beneficiary_clause(self, beneficiary: dict | None) -> str:
+        if not beneficiary:
+            return ""
+        return (
+            f" Queued job {beneficiary['job_id']} (needs {beneficiary['requested_gpus']} GPU(s)) "
+            f"would fit on this capacity immediately."
+        )
 
     def _tail_window(self, ctx: AgentContext, evidence: dict, window):
         timeline = (evidence.get("tools") or {}).get("inspect_utilization_timeline") or {}
@@ -277,9 +298,12 @@ class IdleAllocationAgent(SpecializedAgent):
         nodes = ", ".join(self._nodes_for(ctx, released)) or "unknown node"
         after = action.get("release_after")
         when = f" from {after}" if after else ""
+        backfill_job = action.get("backfill_job_id")
+        for_whom = f" Job {backfill_job} is queued and would start immediately on this capacity." if backfill_job else ""
         return (
             f"Reclaim {len(released)} idle GPU(s) held by {job_id} on {nodes}{when} "
-            f"({', '.join(released[:6])}{'...' if len(released) > 6 else ''}). "
+            f"({', '.join(released[:6])}{'...' if len(released) > 6 else ''})."
+            f"{for_whom} "
             "Confirm with the job owner, then enforce via an idle-reaper policy or a shorter "
             "walltime for this job family. Requires human approval; Natilah changes nothing."
         )

@@ -6,22 +6,7 @@ import { CartesianGrid, ComposedChart, Line, XAxis, YAxis } from "recharts";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
-const seed = (n: number) => {
-  let x = Math.sin(n + 1) * 10000;
-  return x - Math.floor(x);
-};
-
-const recoverySeries = Array.from({ length: 84 }, (_, i) => {
-  const t = i / 83;
-  const recovered = 8000 + 6000 * t + (seed(i * 3) - 0.5) * 3000;
-  const wasted = 22000 - 4000 * t + (seed(i * 7 + 1) - 0.5) * 2500;
-  return {
-    date: `2026-04-${String(1 + Math.floor(i / 3)).padStart(2, "0")}`,
-    dayIndex: 1 + (i * 27) / 83,
-    recoveredGpuHours: Math.round(recovered),
-    wastedGpuHours: Math.round(wasted),
-  };
-});
+const recoverySeries: { date: string; dayIndex: number; recoveredGpuHours: number; wastedGpuHours: number }[] = [];
 
 const chartConfig = {
   recoveredGpuHours: { color: "var(--chart-3)", label: "Recovered GPU-hours" },

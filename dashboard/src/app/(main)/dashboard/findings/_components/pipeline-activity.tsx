@@ -7,7 +7,7 @@ import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } f
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const detectedValues = [312, 344, 298, 421, 387, 456, 412, 398, 521, 478, 445, 492] as const;
+const detectedValues = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as const;
 
 const chartConfig = {
   detected: { label: "Detected", color: "var(--chart-1)" },
@@ -18,7 +18,7 @@ const tooltipMonthFormatter = new Intl.DateTimeFormat("en-US", { month: "short",
 
 function getRollingMonthData(values: readonly number[]) {
   return values.map((detected, index) => {
-    const date = new Date("2026-08-30");
+    const date = new Date();
     date.setMonth(date.getMonth() - (values.length - 1 - index));
     return { date: date.toISOString(), detected };
   });
@@ -27,7 +27,7 @@ function getRollingMonthData(values: readonly number[]) {
 export function PipelineActivity() {
   const chartData = getRollingMonthData(detectedValues);
   const totalDetected = chartData.reduce((sum, item) => sum + item.detected, 0);
-  const resolved = 3841;
+  const resolved = 0;
   const resolveRate = Math.round((resolved / totalDetected) * 100);
 
   return (

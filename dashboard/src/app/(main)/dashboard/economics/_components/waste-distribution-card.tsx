@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 type WasteKey = "idle_allocation" | "queue_inefficiency" | "over_allocation" | "fragmentation";
 
 const wasteData: { category: string; amount: number; key: WasteKey; percentage: number }[] = [
-  { category: "Idle Allocation", amount: 218000, key: "idle_allocation", percentage: 40.7 },
-  { category: "Queue Inefficiency", amount: 156000, key: "queue_inefficiency", percentage: 29.1 },
-  { category: "Over-Allocation", amount: 97000, key: "over_allocation", percentage: 18.1 },
-  { category: "Fragmentation", amount: 64185, key: "fragmentation", percentage: 12.1 },
+  { category: "Idle Allocation", amount: 0, key: "idle_allocation", percentage: 0 },
+  { category: "Queue Inefficiency", amount: 0, key: "queue_inefficiency", percentage: 0 },
+  { category: "Over-Allocation", amount: 0, key: "over_allocation", percentage: 0 },
+  { category: "Fragmentation", amount: 0, key: "fragmentation", percentage: 0 },
 ];
 
 const chartConfig = {

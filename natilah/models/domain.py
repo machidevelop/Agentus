@@ -14,8 +14,24 @@ from natilah.models.enums import (
     ConfidenceLevel,
     DecisionType,
     JobState,
+    Meter,
     OpportunityType,
     Resolution,
+)
+from natilah.models.resources import (
+    Checkpoint,
+    ClockCap,
+    Commitment,
+    DatasetArtifact,
+    FacilityProfile,
+    ImagePull,
+    InferenceEndpoint,
+    InferenceMetricSample,
+    NetworkFlow,
+    PowerTariff,
+    StorageSnapshot,
+    StorageVolume,
+    TrainingRun,
 )
 
 
@@ -393,6 +409,8 @@ class EconomicConfig(BaseModel):
     gpu_amortization_years: float = 3.0
     facility_cost_multiplier: float = 1.4
     working_hours_per_month: float = 720.0
+    # Rate per unit for the non-GPU meters, keyed by Meter value.
+    meter_rates: dict[str, float] = Field(default_factory=dict)
 
 
 class ValueEstimate(BaseModel):
@@ -441,12 +459,48 @@ class GPUInterval(BaseModel):
         return max(0.0, (self.end - self.start).total_seconds() / 3600.0)
 
 
+class ResourceInterval(BaseModel):
+    """A metered resource held over a window.
+
+    One shape covers every time-accruing meter. `magnitude` is how much of the
+    resource is held — 1 GPU, 500 GB, 0.4 kW, 3 replicas — and the meter says
+    what a unit of time is worth, so quantity is always magnitude x duration.
+    """
+
+    meter: Meter
+    resource_id: str
+    start: datetime
+    end: datetime
+    magnitude: float = 1.0
+
+    @property
+    def seconds(self) -> float:
+        return max(0.0, (self.end - self.start).total_seconds())
+
+    @property
+    def quantity(self) -> float:
+        return self.magnitude * self.seconds / self.meter.seconds_per_unit
+
+
+class ResourceQuantity(BaseModel):
+    """A metered amount with no time dimension: bytes moved, dollars committed."""
+
+    meter: Meter
+    resource_id: str
+    amount: float
+
+
 class ResourceClaim(BaseModel):
-    """Exactly which GPU-hours and queue-seconds a finding claims to recover.
+    """Exactly what a finding claims to recover, in the meters it recovers it in.
 
     The coordination layer needs this to deduplicate: two agents may describe
-    the same wasted GPU-hours from different angles, and those hours may only
-    be counted once.
+    the same waste from different angles, and it may only be counted once.
+    Meters never mix — a storage claim cannot cancel a GPU claim — but a
+    finding may claim in several meters at once, and the ledger credits each
+    one separately.
+
+    GPU-hours and queue-seconds keep their own fields because they predate the
+    generalized meters and the scheduling agents are built on them.
     """
 
     intervals: list[GPUInterval] = Field(default_factory=list)
@@ -454,13 +508,48 @@ class ResourceClaim(BaseModel):
     queue_seconds: float = 0.0
     basis: str = ""
 
+    # Generalized meters (storage, network, power, commitments, inference)
+    resource_intervals: list[ResourceInterval] = Field(default_factory=list)
+    quantities: list[ResourceQuantity] = Field(default_factory=list)
+    primary_meter: Meter = Meter.GPU_HOURS
+
     @property
     def gpu_hours(self) -> float:
-        return sum(i.gpu_hours for i in self.intervals)
+        return sum(i.gpu_hours for i in self.intervals) + self.metered(Meter.GPU_HOURS)
 
     @property
     def gpu_ids(self) -> list[str]:
         return sorted({i.gpu_id for i in self.intervals})
+
+    def metered(self, meter: Meter) -> float:
+        """Total claimed in one generalized meter, ignoring the legacy fields."""
+        total = sum(i.quantity for i in self.resource_intervals if i.meter == meter)
+        total += sum(q.amount for q in self.quantities if q.meter == meter)
+        return total
+
+    def quantity(self, meter: Meter) -> float:
+        """Total claimed in a meter, including the legacy GPU and queue fields."""
+        if meter is Meter.GPU_HOURS:
+            return self.gpu_hours
+        if meter is Meter.QUEUE_SECONDS:
+            return self.queue_seconds + self.metered(Meter.QUEUE_SECONDS)
+        return self.metered(meter)
+
+    def meters(self) -> list[Meter]:
+        """Every meter this claim actually charges, in declaration order."""
+        seen: list[Meter] = []
+        if self.intervals:
+            seen.append(Meter.GPU_HOURS)
+        if self.queue_seconds > 0:
+            seen.append(Meter.QUEUE_SECONDS)
+        for item in [*self.resource_intervals, *self.quantities]:
+            if item.meter not in seen:
+                seen.append(item.meter)
+        return seen
+
+    @property
+    def primary_quantity(self) -> float:
+        return self.quantity(self.primary_meter)
 
 
 class CandidateRecord(BaseModel):
@@ -497,6 +586,9 @@ class Attribution(BaseModel):
     conflicts_with: list[str] = Field(default_factory=list)
     superseded_by: str | None = None
     notes: list[str] = Field(default_factory=list)
+    # Claimed vs credited per meter — what a customer's finance team audits.
+    claimed_by_meter: dict[str, float] = Field(default_factory=dict)
+    attributed_by_meter: dict[str, float] = Field(default_factory=dict)
 
 
 class Finding(BaseModel):
@@ -566,6 +658,13 @@ class CoordinationReport(BaseModel):
     top_actions: list[str] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
 
+    # Per-meter accounting. A fleet headline is never the sum of its agents,
+    # and it is never the sum of unlike units either.
+    claimed_by_meter: dict[str, float] = Field(default_factory=dict)
+    attributed_by_meter: dict[str, float] = Field(default_factory=dict)
+    duplicates_removed_by_meter: dict[str, float] = Field(default_factory=dict)
+    findings_by_meter: dict[str, int] = Field(default_factory=dict)
+
 
 class ClusterDataset(BaseModel):
     nodes: list[Node] = Field(default_factory=list)
@@ -576,6 +675,22 @@ class ClusterDataset(BaseModel):
     decisions: list[SchedulerDecision] = Field(default_factory=list)
     queue_snapshots: list[QueueSnapshot] = Field(default_factory=list)
 
+    # Phase 3 domains. Each is optional: a cluster with no storage connector
+    # simply produces no storage findings rather than failing the run.
+    volumes: list[StorageVolume] = Field(default_factory=list)
+    snapshots: list[StorageSnapshot] = Field(default_factory=list)
+    checkpoints: list[Checkpoint] = Field(default_factory=list)
+    artifacts: list[DatasetArtifact] = Field(default_factory=list)
+    flows: list[NetworkFlow] = Field(default_factory=list)
+    image_pulls: list[ImagePull] = Field(default_factory=list)
+    commitments: list[Commitment] = Field(default_factory=list)
+    tariffs: list[PowerTariff] = Field(default_factory=list)
+    facilities: list[FacilityProfile] = Field(default_factory=list)
+    clock_caps: list[ClockCap] = Field(default_factory=list)
+    training_runs: list[TrainingRun] = Field(default_factory=list)
+    endpoints: list[InferenceEndpoint] = Field(default_factory=list)
+    endpoint_samples: list[InferenceMetricSample] = Field(default_factory=list)
+
     # Lookups are rebuilt on first use and cached: analysis walks these
     # indexes thousands of times per run, once per candidate alternative.
     _job_index: dict[str, Job] | None = PrivateAttr(default=None)
@@ -583,6 +698,8 @@ class ClusterDataset(BaseModel):
     _node_index: dict[str, Node] | None = PrivateAttr(default=None)
     _allocation_index: dict[str, Allocation] | None = PrivateAttr(default=None)
     _samples_index: dict[str, list[GPUUtilizationSample]] | None = PrivateAttr(default=None)
+    _endpoint_samples_index: dict[str, list[InferenceMetricSample]] | None = PrivateAttr(default=None)
+    _snapshots_index: dict[str, list[StorageSnapshot]] | None = PrivateAttr(default=None)
 
     def invalidate_indexes(self) -> None:
         """Call after mutating any of the lists above."""
@@ -591,6 +708,68 @@ class ClusterDataset(BaseModel):
         self._node_index = None
         self._allocation_index = None
         self._samples_index = None
+        self._endpoint_samples_index = None
+        self._snapshots_index = None
+
+    def has_domain_data(self) -> bool:
+        """True when any Phase 3 connector contributed records."""
+        return any(
+            [
+                self.volumes,
+                self.snapshots,
+                self.checkpoints,
+                self.artifacts,
+                self.flows,
+                self.image_pulls,
+                self.commitments,
+                self.clock_caps,
+                self.training_runs,
+                self.endpoints,
+            ]
+        )
+
+    def samples_for_endpoint(self, endpoint_id: str) -> list[InferenceMetricSample]:
+        if self._endpoint_samples_index is None:
+            index: dict[str, list[InferenceMetricSample]] = {}
+            for sample in self.endpoint_samples:
+                index.setdefault(sample.endpoint_id, []).append(sample)
+            for values in index.values():
+                values.sort(key=lambda s: s.timestamp)
+            self._endpoint_samples_index = index
+        return self._endpoint_samples_index.get(endpoint_id, [])
+
+    def snapshots_for_volume(self, volume_id: str) -> list[StorageSnapshot]:
+        if self._snapshots_index is None:
+            index: dict[str, list[StorageSnapshot]] = {}
+            for snap in self.snapshots:
+                index.setdefault(snap.volume_id, []).append(snap)
+            for values in index.values():
+                values.sort(key=lambda s: s.created_at)
+            self._snapshots_index = index
+        return self._snapshots_index.get(volume_id, [])
+
+    def window(self) -> tuple[datetime, datetime] | None:
+        """Observation window spanning jobs and every domain record present."""
+        starts: list[datetime] = []
+        ends: list[datetime] = []
+        for job in self.jobs:
+            starts.append(job.submit_time)
+            ends.append(job.end_time or job.start_time or job.submit_time)
+        for flow in self.flows:
+            starts.append(flow.start)
+            ends.append(flow.end)
+        for run in self.training_runs:
+            starts.append(run.start)
+            ends.append(run.end or run.start)
+        for sample in self.endpoint_samples:
+            starts.append(sample.timestamp)
+            ends.append(sample.timestamp)
+        for pull in self.image_pulls:
+            starts.append(pull.timestamp)
+            ends.append(pull.timestamp)
+        if not starts or not ends:
+            return None
+        return min(starts), max(ends)
 
     def job_by_id(self) -> dict[str, Job]:
         if self._job_index is None:

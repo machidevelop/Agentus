@@ -19,16 +19,16 @@ export function WasteBreakdown() {
           <div className="flex flex-col gap-4">
             <div className="flex items-baseline justify-between">
               <span className="text-muted-foreground text-sm">Wasted GPU-hours</span>
-              <span className="font-medium text-2xl tabular-nums">18,632</span>
+              <span className="font-medium text-2xl tabular-nums">0</span>
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-muted-foreground text-sm">Recovered GPU-hours</span>
-              <span className="font-medium text-2xl tabular-nums text-primary">11,039</span>
+              <span className="font-medium text-2xl tabular-nums text-primary">0</span>
             </div>
             <div className="border-t pt-4">
               <div className="flex items-baseline justify-between">
                 <span className="text-muted-foreground text-sm">Monthly value</span>
-                <span className="font-medium text-2xl tabular-nums">$406,180</span>
+                <span className="font-medium text-2xl tabular-nums">$0</span>
               </div>
             </div>
           </div>
@@ -49,16 +49,16 @@ export function WasteBreakdown() {
           <div className="flex flex-col gap-4">
             <div className="flex items-baseline justify-between">
               <span className="text-muted-foreground text-sm">Deduped wait-hours</span>
-              <span className="font-medium text-2xl tabular-nums">802.5</span>
+              <span className="font-medium text-2xl tabular-nums">0</span>
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-muted-foreground text-sm">Queue findings</span>
-              <span className="font-medium text-2xl tabular-nums text-primary">269</span>
+              <span className="font-medium text-2xl tabular-nums text-primary">0</span>
             </div>
             <div className="border-t pt-4">
               <div className="flex items-baseline justify-between">
                 <span className="text-muted-foreground text-sm">Monthly value</span>
-                <span className="font-medium text-2xl tabular-nums">$129,005</span>
+                <span className="font-medium text-2xl tabular-nums">$0</span>
               </div>
             </div>
           </div>

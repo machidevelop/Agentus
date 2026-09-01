@@ -6,18 +6,7 @@ import { Bar, BarChart, type BarShapeProps, XAxis, YAxis } from "recharts";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
-const confidenceData = [
-  { bucket: 1, count: 2 }, { bucket: 2, count: 4 }, { bucket: 3, count: 6 },
-  { bucket: 4, count: 8 }, { bucket: 5, count: 10 }, { bucket: 6, count: 14 },
-  { bucket: 7, count: 18 }, { bucket: 8, count: 22 }, { bucket: 9, count: 28 },
-  { bucket: 10, count: 36 }, { bucket: 11, count: 52 }, { bucket: 12, count: 74 },
-  { bucket: 13, count: 98 }, { bucket: 14, count: 130 }, { bucket: 15, count: 180 },
-  { bucket: 16, count: 240 }, { bucket: 17, count: 340 }, { bucket: 18, count: 480 },
-  { bucket: 19, count: 620 }, { bucket: 20, count: 780 }, { bucket: 21, count: 820 },
-  { bucket: 22, count: 740 }, { bucket: 23, count: 580 }, { bucket: 24, count: 420 },
-  { bucket: 25, count: 280 }, { bucket: 26, count: 160 }, { bucket: 27, count: 90 },
-  { bucket: 28, count: 48 }, { bucket: 29, count: 22 }, { bucket: 30, count: 8 },
-];
+const confidenceData = Array.from({ length: 30 }, (_, i) => ({ bucket: i + 1, count: 0 }));
 
 const chartConfig = {
   count: {
@@ -64,7 +53,7 @@ export function ConfidenceDistribution() {
       <CardContent className="flex flex-col gap-4">
         <div className="flex items-end justify-between">
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl tabular-nums leading-none tracking-tight">97.4%</span>
+            <span className="text-2xl tabular-nums leading-none tracking-tight">0%</span>
             <span className="text-muted-foreground text-sm">high confidence</span>
           </div>
         </div>
@@ -79,19 +68,19 @@ export function ConfidenceDistribution() {
         <div className="grid grid-cols-2">
           <div className="flex flex-col gap-0.5 border-border/50 border-r border-b pt-1 pr-5 pb-4">
             <span className="text-muted-foreground text-xs">High (&gt;0.8)</span>
-            <span className="font-medium tabular-nums text-sm">4,969</span>
+            <span className="font-medium tabular-nums text-sm">0</span>
           </div>
           <div className="flex flex-col gap-0.5 border-border/50 border-b pt-1 pb-4 pl-5">
             <span className="text-muted-foreground text-xs">Medium (0.6–0.8)</span>
-            <span className="font-medium tabular-nums text-sm">500</span>
+            <span className="font-medium tabular-nums text-sm">0</span>
           </div>
           <div className="flex flex-col gap-0.5 border-border/50 border-r pt-4 pr-5 pb-1">
             <span className="text-muted-foreground text-xs">Avg Score</span>
-            <span className="font-medium tabular-nums text-sm">0.842</span>
+            <span className="font-medium tabular-nums text-sm">0</span>
           </div>
           <div className="flex flex-col gap-0.5 pt-4 pb-1 pl-5">
             <span className="text-muted-foreground text-xs">Total</span>
-            <span className="font-medium tabular-nums text-sm">5,524</span>
+            <span className="font-medium tabular-nums text-sm">0</span>
           </div>
         </div>
       </CardContent>

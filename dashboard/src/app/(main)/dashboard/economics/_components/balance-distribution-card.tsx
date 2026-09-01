@@ -16,10 +16,10 @@ const valueData: {
   key: ValueKey;
   percentage: number;
 }[] = [
-  { account: "Idle Allocation", amount: 406_180, key: "idle", percentage: 75.9 },
-  { account: "Queue Inefficiency", amount: 129_005, key: "queue", percentage: 24.1 },
-  { account: "Over-Allocation", amount: 67_200, key: "over", percentage: 12.6 },
-  { account: "Fragmentation", amount: 14_800, key: "frag", percentage: 2.8 },
+  { account: "Idle Allocation", amount: 0, key: "idle", percentage: 0 },
+  { account: "Queue Inefficiency", amount: 0, key: "queue", percentage: 0 },
+  { account: "Over-Allocation", amount: 0, key: "over", percentage: 0 },
+  { account: "Fragmentation", amount: 0, key: "frag", percentage: 0 },
 ];
 
 const chartConfig = {
@@ -44,7 +44,7 @@ const getColor = (key: ValueKey) => {
 };
 
 const chartData = valueData.map((item) => ({ ...item, fill: getColor(item.key) }));
-const totalValue = 535_185;
+const totalValue = 0;
 
 function formatCurrency(val: number) {
   return `$${val.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;

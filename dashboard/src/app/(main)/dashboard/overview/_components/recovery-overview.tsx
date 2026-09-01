@@ -28,24 +28,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function generateData() {
-  const data = [];
-  const now = new Date("2026-08-30");
-  for (let i = 167; i >= 0; i--) {
-    const d = new Date(now);
-    d.setHours(now.getHours() - i);
-    const hour = d.getHours();
-    const base = 3000 + Math.sin(i / 12) * 800;
-    const waste = Math.round(base + Math.random() * 600);
-    const recovered = Math.round(waste * (0.6 + Math.random() * 0.2));
-    const queued = Math.round(waste * (0.1 + Math.random() * 0.15));
-    data.push({
-      time: d.toLocaleTimeString("en-US", { hour: "2-digit", hour12: false }) + (i % 24 === 0 ? ` ${d.getDate()}` : ""),
-      wasteDetected: waste,
-      recovered,
-      queued,
-    });
-  }
-  return data;
+  return Array.from({ length: 24 }, (_, i) => ({
+    time: `${String(i).padStart(2, "0")}:00`,
+    wasteDetected: 0,
+    recovered: 0,
+    queued: 0,
+  }));
 }
 
 const allData = generateData();

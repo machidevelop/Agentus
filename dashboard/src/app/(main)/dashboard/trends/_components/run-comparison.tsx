@@ -13,26 +13,11 @@ const chartConfig = {
 
 type RunDatum = { label: string; source: string; value: number };
 
-const fiveKData: RunDatum[] = [
-  { label: "2,088", source: "idle_allocation", value: 2088 },
-  { label: "269", source: "queue_inefficiency", value: 269 },
-  { label: "168", source: "over_allocation", value: 168 },
-  { label: "33", source: "fragmentation", value: 33 },
-];
+const fiveKData: RunDatum[] = [];
 
-const fiftyKData: RunDatum[] = [
-  { label: "4,540", source: "idle_allocation", value: 4540 },
-  { label: "394", source: "queue_inefficiency", value: 394 },
-  { label: "327", source: "fragmentation", value: 327 },
-  { label: "263", source: "over_allocation", value: 263 },
-];
+const fiftyKData: RunDatum[] = [];
 
-const byTypeData: RunDatum[] = [
-  { label: "$406k", source: "Utilization", value: 406180 },
-  { label: "$129k", source: "Queue", value: 129005 },
-  { label: "$67k", source: "Over-alloc", value: 67200 },
-  { label: "$15k", source: "Fragmentation", value: 14800 },
-];
+const byTypeData: RunDatum[] = [];
 
 function renderValueLabel(props: LabelProps) {
   const { height, value, y } = props;

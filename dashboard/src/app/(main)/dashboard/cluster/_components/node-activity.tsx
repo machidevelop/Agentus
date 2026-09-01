@@ -8,8 +8,8 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const gpuHoursByHour = [
-  210, 198, 185, 192, 205, 230, 268, 310, 348, 362, 355, 340,
-  338, 345, 372, 380, 365, 350, 332, 315, 290, 268, 245, 222,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ] as const;
 
 const chartConfig = {
@@ -26,8 +26,8 @@ const chartData = gpuHoursByHour.map((gpuHours, index) => ({
 }));
 
 const totalGpuHours = chartData.reduce((sum, d) => sum + d.gpuHours, 0);
-const peakHours = 284;
-const peakProgress = Math.round((peakHours / 400) * 100);
+const peakHours = 0;
+const peakProgress = 0;
 
 export function NodeActivity() {
   return (
@@ -105,7 +105,7 @@ export function NodeActivity() {
             <div className="flex flex-col gap-5 rounded-lg p-4 lg:col-span-4">
               <div className="flex flex-col gap-1">
                 <div className="font-medium text-4xl tabular-nums leading-none">
-                  400 <span className="font-normal text-lg text-muted-foreground">GPUs</span>
+                  0 <span className="font-normal text-lg text-muted-foreground">GPUs</span>
                 </div>
                 <p className="text-muted-foreground text-sm">Total GPUs monitored across all nodes in the cluster.</p>
               </div>
@@ -117,7 +117,7 @@ export function NodeActivity() {
 
                 <div className="flex flex-col gap-1.5">
                   <div className="font-medium text-2xl tabular-nums leading-none">
-                    14:00–16:00 <span className="font-normal text-muted-foreground text-sm">UTC</span>
+                    —:——–—:— <span className="font-normal text-muted-foreground text-sm">UTC</span>
                   </div>
                   <p className="text-muted-foreground text-sm">
                     {peakProgress}% of GPUs active during peak window.
@@ -131,7 +131,7 @@ export function NodeActivity() {
                   />
                   <div className="flex items-center justify-between text-xs">
                     <div className="font-medium tabular-nums">{peakHours} active</div>
-                    <div className="text-muted-foreground tabular-nums">400 total</div>
+                    <div className="text-muted-foreground tabular-nums">0 total</div>
                   </div>
                 </div>
               </div>

@@ -23,18 +23,18 @@ export function FindingsKpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">2,558</span>
+              <span className="text-3xl leading-none tracking-tight">0</span>
               <Badge
                 variant="outline"
                 className="border-green-200 bg-green-500/10 text-green-700 dark:border-green-900/40 dark:bg-green-500/15 dark:text-green-300"
               >
                 <TrendingUp />
-                +116%
+                0%
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">77</span>{" "}
-              <span className="text-muted-foreground">previous run (5k v2)</span>
+              <span className="font-medium text-foreground">0</span>{" "}
+              <span className="text-muted-foreground">previous run</span>
             </p>
           </CardContent>
         </Card>
@@ -48,17 +48,17 @@ export function FindingsKpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">$535,185</span>
+              <span className="text-3xl leading-none tracking-tight">$0</span>
               <Badge
                 variant="outline"
                 className="border-green-200 bg-green-500/10 text-green-700 dark:border-green-900/40 dark:bg-green-500/15 dark:text-green-300"
               >
                 <TrendingUp />
-                +626x
+                0%
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">$854</span>{" "}
+              <span className="font-medium text-foreground">$0</span>{" "}
               <span className="text-muted-foreground">last run</span>
             </p>
           </CardContent>
@@ -73,18 +73,18 @@ export function FindingsKpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">97.4%</span>
+              <span className="text-3xl leading-none tracking-tight">0%</span>
               <Badge
                 variant="outline"
                 className="border-green-200 bg-green-500/10 text-green-700 dark:border-green-900/40 dark:bg-green-500/15 dark:text-green-300"
               >
                 <TrendingUp />
-                +10.6%
+                0%
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">2,492</span>{" "}
-              <span className="text-muted-foreground">of 2,558 findings</span>
+              <span className="font-medium text-foreground">0</span>{" "}
+              <span className="text-muted-foreground">of 0 findings</span>
             </p>
           </CardContent>
         </Card>
@@ -98,14 +98,14 @@ export function FindingsKpiCards() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
-              <span className="text-3xl leading-none tracking-tight">2,088</span>
+              <span className="text-3xl leading-none tracking-tight">0</span>
               <Badge variant="outline" className="border-destructive/20 bg-destructive/10 text-destructive">
                 <TrendingDown />
-                81.6%
+                0%
               </Badge>
             </div>
             <p className="text-sm">
-              <span className="font-medium text-foreground">81.6%</span>{" "}
+              <span className="font-medium text-foreground">0%</span>{" "}
               <span className="text-muted-foreground">of all findings</span>
             </p>
           </CardContent>

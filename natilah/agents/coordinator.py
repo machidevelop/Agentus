@@ -23,10 +23,16 @@ from datetime import datetime, timezone
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from natilah.agents.commitment_agent import CommitmentCoverageAgent
 from natilah.agents.fragmentation_agent import FragmentationPlacementAgent
 from natilah.agents.idle_allocation_agent import IdleAllocationAgent
+from natilah.agents.inference_agent import InferenceEfficiencyAgent
+from natilah.agents.network_agent import NetworkEfficiencyAgent
 from natilah.agents.over_allocation_agent import OverAllocationAgent
+from natilah.agents.power_agent import PowerEfficiencyAgent
 from natilah.agents.queue_efficiency_agent import QueueEfficiencyAgent
+from natilah.agents.storage_agent import StorageEfficiencyAgent
+from natilah.agents.training_agent import TrainingEfficiencyAgent
 from natilah.engine.claim import GPUHourLedger
 from natilah.engine.history import HistoricalPatternIndex
 from natilah.engine.state_reconstructor import ClusterStateReconstructor
@@ -44,15 +50,24 @@ from natilah.safety.guards import Action, SafetyGuard
 logger = logging.getLogger(__name__)
 
 MIN_ATTRIBUTED_GPU_HOURS = 0.05
+MIN_ATTRIBUTED_QUANTITY = 1e-6
 
 
 def default_agents(value_calculator: ValueCalculator | None = None, use_llm: bool | None = None):
-    """One agent per optimization objective."""
+    """One agent per optimization objective — scheduling agents plus Phase 3 domain agents."""
     return [
+        # Scheduling agents (GPU-hours meter)
         IdleAllocationAgent(value_calculator=value_calculator, use_llm=use_llm),
         OverAllocationAgent(value_calculator=value_calculator, use_llm=use_llm),
         QueueEfficiencyAgent(value_calculator=value_calculator, use_llm=use_llm),
         FragmentationPlacementAgent(value_calculator=value_calculator, use_llm=use_llm),
+        # Phase 3: each domain has its own meter
+        StorageEfficiencyAgent(),
+        NetworkEfficiencyAgent(),
+        CommitmentCoverageAgent(),
+        PowerEfficiencyAgent(),
+        TrainingEfficiencyAgent(),
+        InferenceEfficiencyAgent(),
     ]
 
 
@@ -155,14 +170,17 @@ class AgentCoordinator:
             attribution.expected_monthly_value = (
                 attribution.attributed_monthly_value * finding.confidence.score
             )
+            for meter, bucket in credited.per_meter.items():
+                key = meter.value
+                report.claimed_by_meter[key] = report.claimed_by_meter.get(key, 0.0) + bucket.claimed
+                attribution.claimed_by_meter[key] = bucket.claimed
+                attribution.attributed_by_meter[key] = bucket.attributed
 
-            if (
-                credited.attributed_gpu_hours < MIN_ATTRIBUTED_GPU_HOURS
-                and credited.attributed_queue_seconds <= 0
-            ):
+            if self._fully_absorbed(finding, credited):
                 attribution.resolution = Resolution.FULLY_DEDUPLICATED
                 attribution.notes.append(
-                    "Every GPU-hour in this claim was already credited to a higher-value finding."
+                    f"Every {finding.claim.primary_meter.unit_label} in this claim was already "
+                    "credited to a higher-value finding."
                 )
                 suppressed.append(finding)
                 continue
@@ -177,9 +195,17 @@ class AgentCoordinator:
 
             for job_id in self._mutation_targets(finding):
                 claimed_targets.setdefault(job_id, finding.opportunity_id)
+            for resource in self._resource_targets(finding):
+                claimed_targets.setdefault(resource, finding.opportunity_id)
             for job_id in finding.claim.queue_job_ids:
                 claimed_beneficiaries.setdefault(job_id, finding.opportunity_id)
             ranked.append(finding)
+            meter_key = finding.claim.primary_meter.value
+            report.findings_by_meter[meter_key] = report.findings_by_meter.get(meter_key, 0) + 1
+            for meter, bucket in credited.per_meter.items():
+                report.attributed_by_meter[meter.value] = (
+                    report.attributed_by_meter.get(meter.value, 0.0) + bucket.attributed
+                )
 
         ranked.sort(key=lambda f: f.attribution.expected_monthly_value, reverse=True)
         for index, finding in enumerate(ranked, start=1):
@@ -189,6 +215,9 @@ class AgentCoordinator:
         report.suppressed_findings = len(suppressed)
         report.duplicate_gpu_hours_removed = ledger.total_overlap_gpu_hours
         report.duplicate_queue_seconds_removed = ledger.total_overlap_queue_seconds
+        report.duplicates_removed_by_meter = {
+            meter.value: amount for meter, amount in ledger.overlap_by_meter.items()
+        }
         report.attributed_gpu_hours = sum(f.attribution.attributed_gpu_hours for f in ranked)
         report.attributed_monthly_value = sum(f.attribution.attributed_monthly_value for f in ranked)
         report.attributed_annual_value = sum(f.attribution.attributed_annual_value for f in ranked)
@@ -216,6 +245,41 @@ class AgentCoordinator:
     @staticmethod
     def _expected_value(finding: Finding) -> float:
         return finding.value.estimated_monthly_value * max(finding.confidence.score, 0.0)
+
+    @staticmethod
+    def _fully_absorbed(finding: Finding, credited) -> bool:
+        """True when nothing in this claim survived a higher-value finding.
+
+        GPU and queue claims keep the original rule, because the four
+        scheduling agents were tuned against it. Other meters are judged on
+        their own primary meter — a storage finding has no GPU-hours to lose.
+        """
+        claim = finding.claim
+        if claim.intervals or claim.queue_seconds > 0:
+            return (
+                credited.attributed_gpu_hours < MIN_ATTRIBUTED_GPU_HOURS
+                and credited.attributed_queue_seconds <= 0
+            )
+        bucket = credited.per_meter.get(claim.primary_meter)
+        return bucket is None or bucket.attributed <= MIN_ATTRIBUTED_QUANTITY
+
+    @staticmethod
+    def _resource_targets(finding: Finding) -> set[str]:
+        """Non-job resources a finding would change: a volume, endpoint, or commitment.
+
+        Two findings cannot both delete the same snapshot or resize the same
+        endpoint, so the same conflict rule that protects a job protects these.
+        """
+        action = finding.alternative.proposed_action or {}
+        targets: set[str] = set()
+        for key in ("resource_id", "volume_id", "endpoint_id", "commitment_id", "artifact_id"):
+            value = action.get(key)
+            if value:
+                targets.add(f"{key}:{value}")
+        resource_id = (finding.evidence or {}).get("resource_id")
+        if resource_id and finding.objective is not None:
+            targets.add(f"{finding.objective.value}:{resource_id}")
+        return targets
 
     @staticmethod
     def _mutation_targets(finding: Finding) -> set[str]:
@@ -246,6 +310,13 @@ class AgentCoordinator:
                 return winner, (
                     f"A higher-value finding already changes {job_id}; two conflicting actions "
                     "cannot both be applied."
+                )
+        for resource in self._resource_targets(finding):
+            winner = claimed_targets.get(resource)
+            if winner:
+                return winner, (
+                    f"A higher-value finding already changes {resource.split(':', 1)[-1]}; two "
+                    "conflicting actions cannot both be applied."
                 )
         for job_id in finding.claim.queue_job_ids:
             winner = claimed_beneficiaries.get(job_id)

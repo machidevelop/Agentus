@@ -16,16 +16,16 @@ export function KpiStrip() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">5,524</div>
+              <div className="text-2xl leading-none tracking-tight">0</div>
               <Badge className="bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300">
                 <ArrowUpRight />
-                +116.0%
+                0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">2,558</span></span>
+              <span>from <span className="text-foreground">0</span></span>
               <span>•</span>
-              <span>5k run</span>
+              <span>previous run</span>
             </div>
           </CardContent>
         </Card>
@@ -37,33 +37,33 @@ export function KpiStrip() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">4,969</div>
+              <div className="text-2xl leading-none tracking-tight">0</div>
               <Badge className="bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300">
-                <ArrowUpRight />+99.4%
+                <ArrowUpRight />0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">2,492</span></span>
-              <span>•</span><span>5k run</span>
+              <span>from <span className="text-foreground">0</span></span>
+              <span>•</span><span>previous run</span>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-normal text-sm">Monthly Value (5k)</CardTitle>
+            <CardTitle className="font-normal text-sm">Monthly Value</CardTitle>
             <CardAction><Ellipsis className="size-4" /></CardAction>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">$535k</div>
+              <div className="text-2xl leading-none tracking-tight">$0</div>
               <Badge className="bg-destructive/10 text-destructive">
-                <ArrowDownRight />-47.3%
+                <ArrowDownRight />0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">$1.01M</span></span>
-              <span>•</span><span>naive estimate</span>
+              <span>from <span className="text-foreground">$0</span></span>
+              <span>•</span><span>previous run</span>
             </div>
           </CardContent>
         </Card>
@@ -75,14 +75,14 @@ export function KpiStrip() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">51.01%</div>
+              <div className="text-2xl leading-none tracking-tight">0%</div>
               <Badge className="bg-destructive/10 text-destructive">
-                <ArrowDownRight />-8.24pp
+                <ArrowDownRight />0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">59.25%</span></span>
-              <span>•</span><span>5k run</span>
+              <span>from <span className="text-foreground">0%</span></span>
+              <span>•</span><span>previous run</span>
             </div>
           </CardContent>
         </Card>
@@ -94,14 +94,14 @@ export function KpiStrip() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="text-2xl leading-none tracking-tight">0.842</div>
+              <div className="text-2xl leading-none tracking-tight">0</div>
               <Badge className="bg-destructive/10 text-destructive">
-                <ArrowDownRight />-1.7%
+                <ArrowDownRight />0%
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs">
-              <span>from <span className="text-foreground">0.857</span></span>
-              <span>•</span><span>5k run</span>
+              <span>from <span className="text-foreground">0</span></span>
+              <span>•</span><span>previous run</span>
             </div>
           </CardContent>
         </Card>

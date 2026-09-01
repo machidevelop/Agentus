@@ -9,38 +9,11 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 const DAY_MS = 24 * 60 * 60 * 1000;
 const weekStart = Date.UTC(2026, 0, 5);
 
-const rawData = [
-  { date: "2026-01-05T02:00:00Z", recovered: 320, baseline: 580 },
-  { date: "2026-01-05T08:00:00Z", recovered: 410, baseline: 610 },
-  { date: "2026-01-05T14:00:00Z", recovered: 390, baseline: 595 },
-  { date: "2026-01-05T20:00:00Z", recovered: 450, baseline: 620 },
-  { date: "2026-01-06T02:00:00Z", recovered: 480, baseline: 640 },
-  { date: "2026-01-06T08:00:00Z", recovered: 520, baseline: 660 },
-  { date: "2026-01-06T14:00:00Z", recovered: 490, baseline: 650 },
-  { date: "2026-01-06T20:00:00Z", recovered: 560, baseline: 680 },
-  { date: "2026-01-07T02:00:00Z", recovered: 430, baseline: 630 },
-  { date: "2026-01-07T08:00:00Z", recovered: 510, baseline: 655 },
-  { date: "2026-01-07T14:00:00Z", recovered: 570, baseline: 690 },
-  { date: "2026-01-07T20:00:00Z", recovered: 600, baseline: 710 },
-  { date: "2026-01-08T02:00:00Z", recovered: 540, baseline: 670 },
-  { date: "2026-01-08T08:00:00Z", recovered: 580, baseline: 695 },
-  { date: "2026-01-08T14:00:00Z", recovered: 620, baseline: 720 },
-  { date: "2026-01-08T20:00:00Z", recovered: 650, baseline: 740 },
-  { date: "2026-01-09T02:00:00Z", recovered: 590, baseline: 700 },
-  { date: "2026-01-09T08:00:00Z", recovered: 630, baseline: 725 },
-  { date: "2026-01-09T14:00:00Z", recovered: 680, baseline: 760 },
-  { date: "2026-01-09T20:00:00Z", recovered: 710, baseline: 780 },
-  { date: "2026-01-10T02:00:00Z", recovered: 660, baseline: 745 },
-  { date: "2026-01-10T08:00:00Z", recovered: 700, baseline: 770 },
-  { date: "2026-01-10T14:00:00Z", recovered: 740, baseline: 795 },
-  { date: "2026-01-10T20:00:00Z", recovered: 780, baseline: 820 },
-  { date: "2026-01-11T02:00:00Z", recovered: 720, baseline: 785 },
-  { date: "2026-01-11T08:00:00Z", recovered: 760, baseline: 810 },
-  { date: "2026-01-11T14:00:00Z", recovered: 800, baseline: 840 },
-  { date: "2026-01-11T20:00:00Z", recovered: 830, baseline: 860 },
-  { date: "2026-01-12T02:00:00Z", recovered: 790, baseline: 825 },
-  { date: "2026-01-12T08:00:00Z", recovered: 850, baseline: 870 },
-];
+const rawData = Array.from({ length: 7 }, (_, i) => ({
+  date: `2026-01-${String(5 + i).padStart(2, "0")}T12:00:00Z`,
+  recovered: 0,
+  baseline: 0,
+}));
 
 const chartData = rawData.map((item) => ({
   ...item,

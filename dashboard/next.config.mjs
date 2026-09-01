@@ -7,7 +7,7 @@ const nextConfig = {
   headers: async () => {
     return [
       {
-        source: "/(.*)",
+        source: "/(api|trpc)(.*)",
         headers: [
           {
             key: "Cache-Control",

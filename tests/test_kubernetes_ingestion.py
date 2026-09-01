@@ -645,5 +645,11 @@ async def test_k8s_ingest_and_analyze(k8s_session: AsyncSession):
             "over_allocation_agent",
             "queue_efficiency_agent",
             "fragmentation_placement_agent",
+            "storage_efficiency_agent",
+            "network_efficiency_agent",
+            "commitment_coverage_agent",
+            "power_efficiency_agent",
+            "training_efficiency_agent",
+            "inference_efficiency_agent",
         }
         assert len(f.alternative.constraints_satisfied) > 0

@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 const metrics = [
   {
     label: "Monthly Recovery",
-    value: "$535,185",
-    change: "+12.4%",
+    value: "$0",
+    change: "0%",
     positive: true,
     icon: DollarSign,
     iconBg: "bg-emerald-500/10",
@@ -17,8 +17,8 @@ const metrics = [
   },
   {
     label: "Active Findings",
-    value: "2,558",
-    change: "+8.1%",
+    value: "0",
+    change: "0%",
     positive: true,
     icon: Activity,
     iconBg: "bg-blue-500/10",
@@ -26,8 +26,8 @@ const metrics = [
   },
   {
     label: "GPU-Hours Wasted",
-    value: "11,039",
-    change: "-3.2%",
+    value: "0",
+    change: "0%",
     positive: false,
     icon: TrendingDown,
     iconBg: "bg-red-500/10",
@@ -35,8 +35,8 @@ const metrics = [
   },
   {
     label: "Avg Queue Wait",
-    value: "802.5 min",
-    change: "-6.7%",
+    value: "0 min",
+    change: "0%",
     positive: false,
     icon: Layers,
     iconBg: "bg-amber-500/10",

@@ -103,6 +103,12 @@ async def test_api_agents_listing(async_client: AsyncClient):
         "over_allocation",
         "queue_efficiency",
         "fragmentation_placement",
+        "storage_efficiency",
+        "network_efficiency",
+        "commitment_coverage",
+        "power_efficiency",
+        "training_efficiency",
+        "inference_efficiency",
     }
     for agent in agents:
         assert agent["signals"]
@@ -116,7 +122,7 @@ async def test_api_analysis_run_returns_coordination(async_client: AsyncClient):
     data = resp.json()
     coordination = data["coordination"]
     assert coordination["ranked_findings"] > 0
-    assert len(coordination["agents"]) == 4
+    assert len(coordination["agents"]) == 10
     assert coordination["attributed_gpu_hours"] <= coordination["claimed_gpu_hours"] + 1e-6
     assert coordination["top_actions"]
 

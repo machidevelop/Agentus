@@ -2,48 +2,7 @@ import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/componen
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const clusters = [
-  {
-    name: "aws-us-east-1",
-    gpus: 256,
-    model: "A100-80GB",
-    activeJobs: 68,
-    utilization: 73,
-    findings: 1284,
-    color: "bg-sky-500",
-    lightColor: "bg-sky-500/12",
-  },
-  {
-    name: "gcp-europe-west4",
-    gpus: 128,
-    model: "H100-SXM5",
-    activeJobs: 34,
-    utilization: 58,
-    findings: 621,
-    color: "bg-violet-500",
-    lightColor: "bg-violet-500/12",
-  },
-  {
-    name: "azure-eastus",
-    gpus: 64,
-    model: "A100-80GB",
-    activeJobs: 18,
-    utilization: 81,
-    findings: 412,
-    color: "bg-emerald-500",
-    lightColor: "bg-emerald-500/12",
-  },
-  {
-    name: "on-prem-dc1",
-    gpus: 64,
-    model: "A100-40GB",
-    activeJobs: 7,
-    utilization: 42,
-    findings: 241,
-    color: "bg-amber-500",
-    lightColor: "bg-amber-500/12",
-  },
-];
+const clusters: { name: string; gpus: number; model: string; activeJobs: number; utilization: number; findings: number; color: string; lightColor: string }[] = [];
 
 export function ClusterTopologyCard() {
   return (

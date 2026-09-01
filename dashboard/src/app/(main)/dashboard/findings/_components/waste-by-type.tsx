@@ -7,7 +7,7 @@ import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } f
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const findingsChartValues = [198, 224, 187, 251, 233, 278, 244, 219, 295, 261, 238, 280] as const;
+const findingsChartValues = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as const;
 
 const findingsChartConfig = {
   findings: {
@@ -30,8 +30,8 @@ function getRollingMonthData(values: readonly number[]) {
 export function WasteByType() {
   const chartData = getRollingMonthData(findingsChartValues);
   const totalFindings = chartData.reduce((sum, item) => sum + item.findings, 0);
-  const queueFindings = 269;
-  const queueTarget = 500;
+  const queueFindings = 0;
+  const queueTarget = 0;
   const queueProgress = Math.round((queueFindings / queueTarget) * 100);
 
   return (

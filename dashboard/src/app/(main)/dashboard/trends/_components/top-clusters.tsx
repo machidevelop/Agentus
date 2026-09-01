@@ -3,12 +3,7 @@ import { Ellipsis } from "lucide-react";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const clusters = [
-  { name: "aws-us-east-1", gpus: 256, utilization: "73%", findings: "1,284", waste: "$218k/mo" },
-  { name: "gcp-europe-west4", gpus: 128, utilization: "58%", findings: "621", waste: "$156k/mo" },
-  { name: "azure-eastus", gpus: 64, utilization: "81%", findings: "412", waste: "$97k/mo" },
-  { name: "on-prem-dc1", gpus: 64, utilization: "42%", findings: "241", waste: "$64k/mo" },
-];
+const clusters: { name: string; gpus: number; utilization: string; findings: string; waste: string }[] = [];
 
 export function TopClusters() {
   return (

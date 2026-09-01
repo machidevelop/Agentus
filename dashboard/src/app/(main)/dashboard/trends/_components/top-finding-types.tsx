@@ -12,26 +12,11 @@ const chartConfig = {
 
 type FindingDatum = { label: string; category: string; count: number };
 
-const byType: FindingDatum[] = [
-  { label: "1,284", category: "Idle Allocation", count: 1284 },
-  { label: "621", category: "Queue Inefficiency", count: 621 },
-  { label: "412", category: "Over-Allocation", count: 412 },
-  { label: "241", category: "Fragmentation", count: 241 },
-];
+const byType: FindingDatum[] = [];
 
-const byCluster: FindingDatum[] = [
-  { label: "1,284", category: "aws-us-east-1", count: 1284 },
-  { label: "621", category: "gcp-europe-west4", count: 621 },
-  { label: "412", category: "azure-eastus", count: 412 },
-  { label: "241", category: "on-prem-dc1", count: 241 },
-];
+const byCluster: FindingDatum[] = [];
 
-const byTeam: FindingDatum[] = [
-  { label: "892", category: "ML Research", count: 892 },
-  { label: "654", category: "Product AI", count: 654 },
-  { label: "521", category: "Platform Eng", count: 521 },
-  { label: "491", category: "Data Science", count: 491 },
-];
+const byTeam: FindingDatum[] = [];
 
 function renderValueLabel(props: LabelProps) {
   const { height, value, y } = props;

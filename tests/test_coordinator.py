@@ -68,7 +68,7 @@ def test_coordination_deduplicates_and_ranks(synthetic_dataset: ClusterDataset):
     coordinator, findings, report = coordinate(synthetic_dataset)
 
     assert report.total_findings == len(findings)
-    assert report.agents and len(report.agents) == 4
+    assert report.agents and len(report.agents) == 10
     assert report.ranked_findings + report.suppressed_findings == report.total_findings
     # Deduplication can only ever remove value, never invent it.
     assert report.attributed_gpu_hours <= report.claimed_gpu_hours + 1e-6

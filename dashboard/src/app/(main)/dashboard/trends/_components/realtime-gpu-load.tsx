@@ -5,16 +5,7 @@ import { Bar, BarChart, type BarShapeProps, XAxis, YAxis } from "recharts";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
-const realtimeData = [
-  { slot: 1, util: 0 }, { slot: 2, util: 42 }, { slot: 3, util: 58 }, { slot: 4, util: 71 },
-  { slot: 5, util: 65 }, { slot: 6, util: 48 }, { slot: 7, util: 55 }, { slot: 8, util: 73 },
-  { slot: 9, util: 61 }, { slot: 10, util: 0 }, { slot: 11, util: 44 }, { slot: 12, util: 82 },
-  { slot: 13, util: 76 }, { slot: 14, util: 53 }, { slot: 15, util: 67 }, { slot: 16, util: 0 },
-  { slot: 17, util: 38 }, { slot: 18, util: 71 }, { slot: 19, util: 84 }, { slot: 20, util: 59 },
-  { slot: 21, util: 47 }, { slot: 22, util: 92 }, { slot: 23, util: 78 }, { slot: 24, util: 0 },
-  { slot: 25, util: 62 }, { slot: 26, util: 55 }, { slot: 27, util: 0 }, { slot: 28, util: 88 },
-  { slot: 29, util: 73 }, { slot: 30, util: 61 },
-];
+const realtimeData = Array.from({ length: 30 }, (_, i) => ({ slot: i + 1, util: 0 }));
 
 const chartConfig = {
   util: { color: "var(--chart-3)", label: "GPU Load %" },
@@ -46,12 +37,7 @@ function RealtimeBarShape(props: BarShapeProps) {
   );
 }
 
-const clusters = [
-  { name: "aws-us-east-1", util: 73 },
-  { name: "gcp-europe-west4", util: 58 },
-  { name: "azure-eastus", util: 81 },
-  { name: "on-prem-dc1", util: 42 },
-];
+const clusters: { name: string; util: number }[] = [];
 
 export function RealtimeGpuLoad() {
   return (
@@ -63,7 +49,7 @@ export function RealtimeGpuLoad() {
       <CardContent className="flex flex-col gap-4">
         <div className="flex items-end justify-between">
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl tabular-nums leading-none tracking-tight">61.3</span>
+            <span className="text-2xl tabular-nums leading-none tracking-tight">0</span>
             <span className="text-muted-foreground text-sm">% avg utilization</span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground text-sm">

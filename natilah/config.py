@@ -25,6 +25,42 @@ DEFAULT_GPU_COSTS: dict[str, float] = {
 }
 
 
+# One rate per meter, in dollars per unit of that meter. Cloud list-price
+# references; every one is user-configurable, and the assumption is printed on
+# each finding that uses it.
+DEFAULT_METER_RATES: dict[str, float] = {
+    "gb_months": 0.08,          # block SSD, $/GB-month
+    "gb_transferred": 0.02,     # cross-AZ, $/GB
+    "kwh": 0.12,                # industrial electricity, $/kWh
+    "committed_dollars": 1.0,   # already dollars
+    "replica_hours": 2.21,      # one A100-class replica-hour
+    "cpu_hours": 0.04,          # $/vCPU-hour
+    "queue_seconds": 0.0,       # priced through the GPU-hours it implies
+}
+
+# Storage tiers differ by an order of magnitude, so a claim that names its
+# tier is priced against that tier instead of the generic block rate.
+DEFAULT_STORAGE_TIER_RATES: dict[str, float] = {
+    "ssd": 0.08,
+    "nvme": 0.12,
+    "block": 0.08,
+    "standard": 0.045,
+    "object": 0.023,
+    "archive": 0.004,
+    "glacier": 0.004,
+}
+
+# Network egress is priced by where the bytes went, not just how many.
+DEFAULT_NETWORK_KIND_RATES: dict[str, float] = {
+    "cross_az": 0.02,
+    "cross_region": 0.02,
+    "egress": 0.09,
+    "internet": 0.09,
+    "intra_az": 0.0,
+    "storage_read": 0.01,
+}
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",

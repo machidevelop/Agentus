@@ -11,7 +11,7 @@ export function FindingsSummary() {
     <Card className="overflow-hidden p-0">
       <CardHeader className="p-5 pb-0">
         <div>
-          <CardTitle>2,558 Findings</CardTitle>
+          <CardTitle>0 Findings</CardTitle>
           <CardDescription>Latest detected GPU waste findings across all clusters</CardDescription>
         </div>
         <CardAction>

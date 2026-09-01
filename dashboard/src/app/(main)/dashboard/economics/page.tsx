@@ -12,7 +12,7 @@ import { UpcomingCharges } from "./_components/upcoming-charges";
 import { WasteDistributionCard } from "./_components/waste-distribution-card";
 
 export default function Page() {
-  const formattedDate = format(new Date("2026-08-30"), "EEEE, do MMMM yyyy");
+  const formattedDate = format(new Date(), "EEEE, do MMMM yyyy");
 
   return (
     <div className="flex flex-col gap-4">
