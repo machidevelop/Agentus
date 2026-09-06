@@ -88,15 +88,39 @@ class MeterPricing:
         else:
             rate = self.rate_for(meter, tier=tier, kind=kind, gpu_rate=gpu_rate)
         hours_per_month = economic_config.working_hours_per_month
-        monthly = self.monthly_value(quantity, rate, analysis_hours, hours_per_month)
+        gross = quantity * rate
+
+        if meter.is_monthly_rate:
+            # Already a per-month figure. Normalizing it against the observed
+            # window would divide a $12/month charge by the length of the run.
+            monthly = gross
+            one_time = 0.0
+        elif meter.is_recurring:
+            # Waste that keeps accruing. The claim is a rate, so normalize the
+            # observed window up to a month.
+            monthly = self.monthly_value(quantity, rate, analysis_hours, hours_per_month)
+            one_time = 0.0
+        else:
+            # Recovered once. The dollars are real but they do not repeat, so
+            # they are reported as a one-time recovery and the monthly figure
+            # is the rate at which such recoveries appear in this window --
+            # useful for forecasting, never added to a one-time total.
+            monthly = self.monthly_value(quantity, rate, analysis_hours, hours_per_month)
+            one_time = gross
 
         assumptions = [
             f"Metered in {meter.unit_label} at ${rate:,.4f} per {meter.unit_label} "
-            "(cloud reference, user-configurable).",
+            "(cloud reference, user-configurable)."
+            if not meter.is_money
+            else f"Metered in {meter.unit_label}; the meter is dollars, so the rate is 1.0 "
+            "and the claim quantity is the money itself.",
             f"Claim of {quantity:,.2f} {meter.unit_label} comes from the agent's explicit "
             "resource claim, which is also what the coordination layer deduplicates.",
             f"Analysis window is {analysis_hours:.1f} hours; monthly hours assumed "
-            f"{hours_per_month:.0f}.",
+            f"{hours_per_month:.0f}."
+            if not meter.is_monthly_rate
+            else f"Claim is already a monthly rate, so it is not normalized against the "
+            f"{analysis_hours:.1f}-hour observation window.",
             "Value is the difference between what was observed and a feasible alternative, "
             "not a guarantee of future savings.",
             "No production change is implied or performed.",
@@ -111,14 +135,23 @@ class MeterPricing:
         # GPU-hours stay the headline unit for cross-domain comparison only when
         # the claim is actually in GPU-hours; other meters report 0 there rather
         # than inventing an equivalence.
+        if not meter.is_recurring:
+            assumptions.append(
+                f"This is a one-time recovery of ${one_time:,.2f}. The monthly figure "
+                f"(${monthly:,.2f}) is the rate at which comparable recoveries appeared "
+                "in the observed window, not money that repeats."
+            )
+
         gpu_hours = quantity if meter is Meter.GPU_HOURS else 0.0
         return ValueEstimate(
             gpu_hours_recovered=gpu_hours,
-            compute_cost_avoided=quantity * rate,
+            compute_cost_avoided=gross,
             equivalent_gpus_recovered=(quantity / analysis_hours) if analysis_hours > 0 else 0.0,
             estimated_monthly_value=monthly,
             estimated_annual_value=monthly * 12.0,
             assumptions=assumptions,
             cost_model_used=economic_config,
             gpu_type=None,
+            one_time_value=one_time,
+            is_recurring=meter.is_recurring,
         )

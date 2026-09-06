@@ -59,6 +59,21 @@ class OpportunityType(str, Enum):
     OVER_PROVISIONED_REPLICAS = "over_provisioned_replicas"
     BATCH_HEADROOM = "batch_headroom"
 
+    # Consumer: health claim recovery
+    CLAIM_DENIED = "claim_denied"
+    CLAIM_UNDERPAID = "claim_underpaid"
+    DUPLICATE_CHARGE = "duplicate_charge"
+    IMPROPER_BUNDLING = "improper_bundling"
+    BALANCE_BILL = "balance_bill"
+    DEDUCTIBLE_MISAPPLIED = "deductible_misapplied"
+
+    # Consumer: recurring household spend
+    UNUSED_SUBSCRIPTION = "unused_subscription"
+    DUPLICATE_SERVICE = "duplicate_service"
+    SILENT_PRICE_HIKE = "silent_price_hike"
+    TRIAL_CONVERSION = "trial_conversion"
+    BILLING_TERM_ARBITRAGE = "billing_term_arbitrage"
+
 
 class Meter(str, Enum):
     """A unit of waste the ledger can deduplicate and price.
@@ -76,6 +91,13 @@ class Meter(str, Enum):
     REPLICA_HOURS = "replica_hours"
     CPU_HOURS = "cpu_hours"
 
+    # Consumer domains. A dollar is the unit, so the rate is 1.0 and the
+    # claim quantity is the money itself. These do not accrue over time the
+    # way a GPU-hour does: a denied claim is recovered once, not per hour.
+    CLAIM_DOLLARS = "claim_dollars"
+    REFUND_DOLLARS = "refund_dollars"
+    RECURRING_DOLLARS = "recurring_dollars"
+
     @property
     def is_interval(self) -> bool:
         """True when the meter accrues over time and dedups by interval union."""
@@ -85,6 +107,32 @@ class Meter(str, Enum):
     def seconds_per_unit(self) -> float:
         """Seconds that make up one unit of the meter (hour, month, ...)."""
         return _METER_SECONDS.get(self, 3600.0)
+
+    @property
+    def is_recurring(self) -> bool:
+        """True when the recovered quantity keeps accruing every month.
+
+        A GPU left idle wastes GPU-hours again next month, so its claim is a
+        run rate. A denied medical claim is recovered exactly once. Both are
+        real value and the ledger keeps them apart rather than annualizing a
+        one-off into a number a finance team would reject.
+        """
+        return self not in _ONE_TIME_METERS
+
+    @property
+    def is_monthly_rate(self) -> bool:
+        """True when the claim is already a per-month figure.
+
+        A $12/month subscription is $12/month whether it was observed over 30
+        days or 90. Normalizing it against the window the way an accruing
+        meter is normalized would understate it by the length of the window.
+        """
+        return self in _MONTHLY_RATE_METERS
+
+    @property
+    def is_money(self) -> bool:
+        """True when the meter is already denominated in dollars."""
+        return self in _MONEY_METERS
 
     @property
     def unit_label(self) -> str:
@@ -97,6 +145,22 @@ _INTERVAL_METERS = {
     Meter.KWH,
     Meter.REPLICA_HOURS,
     Meter.CPU_HOURS,
+}
+
+_ONE_TIME_METERS = {
+    Meter.CLAIM_DOLLARS,
+    Meter.REFUND_DOLLARS,
+}
+
+_MONTHLY_RATE_METERS = {
+    Meter.RECURRING_DOLLARS,
+}
+
+_MONEY_METERS = {
+    Meter.COMMITTED_DOLLARS,
+    Meter.CLAIM_DOLLARS,
+    Meter.REFUND_DOLLARS,
+    Meter.RECURRING_DOLLARS,
 }
 
 _METER_SECONDS = {
@@ -116,6 +180,9 @@ _METER_LABELS = {
     Meter.COMMITTED_DOLLARS: "$ committed",
     Meter.REPLICA_HOURS: "replica-h",
     Meter.CPU_HOURS: "CPU-h",
+    Meter.CLAIM_DOLLARS: "$ claimed",
+    Meter.REFUND_DOLLARS: "$ refundable",
+    Meter.RECURRING_DOLLARS: "$/month recurring",
 }
 
 
@@ -146,6 +213,10 @@ class AgentObjective(str, Enum):
     POWER_EFFICIENCY = "power_efficiency"
     TRAINING_EFFICIENCY = "training_efficiency"
     INFERENCE_EFFICIENCY = "inference_efficiency"
+
+    # Consumer domains. Same engine, same output contract, dollar meters.
+    CLAIM_RECOVERY = "claim_recovery"
+    RECURRING_SPEND = "recurring_spend"
 
 
 class CandidateOutcome(str, Enum):

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from natilah.agents.coordinator import default_agents
+from natilah.agents.coordinator import default_agents, default_household_agents
 from natilah.agents.fragmentation_agent import FragmentationPlacementAgent
 from natilah.agents.idle_allocation_agent import IdleAllocationAgent
 from natilah.agents.over_allocation_agent import OverAllocationAgent
@@ -30,10 +30,30 @@ def run_agent(agent_cls, dataset: ClusterDataset):
 
 
 def test_one_agent_per_objective():
-    agents = default_agents(use_llm=False)
-    objectives = {agent.objective for agent in agents}
-    assert objectives == set(AgentObjective)
-    assert len(agents) == len(objectives)
+    """Every objective is owned by exactly one agent, across both fleets.
+
+    The cluster fleet and the household fleet run over different datasets, so
+    neither covers every objective alone. Together they must cover all of them
+    and must not duplicate one, which is the rule that keeps the ledger honest.
+    """
+    cluster = default_agents(use_llm=False)
+    household = default_household_agents()
+    agents = cluster + household
+
+    objectives = [agent.objective for agent in agents]
+    assert set(objectives) == set(AgentObjective)
+    assert len(objectives) == len(set(objectives)), "an objective is claimed by two agents"
+
+    # The two fleets stay disjoint: a consumer agent must never be run against
+    # a cluster dataset, and the reverse.
+    assert not {a.objective for a in cluster} & {a.objective for a in household}
+
+
+def test_each_agent_declares_a_distinct_meter_per_fleet():
+    """One agent per meter is the design rule the whole fleet rests on."""
+    household = default_household_agents()
+    meters = [agent.primary_meter for agent in household]
+    assert len(meters) == len(set(meters)), "two consumer agents share a meter"
 
 
 @pytest.mark.parametrize("agent_cls", AGENT_CLASSES)

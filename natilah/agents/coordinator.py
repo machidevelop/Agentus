@@ -23,6 +23,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from natilah.agents.claim_recovery_agent import ClaimRecoveryAgent
 from natilah.agents.commitment_agent import CommitmentCoverageAgent
 from natilah.agents.fragmentation_agent import FragmentationPlacementAgent
 from natilah.agents.idle_allocation_agent import IdleAllocationAgent
@@ -31,10 +32,13 @@ from natilah.agents.network_agent import NetworkEfficiencyAgent
 from natilah.agents.over_allocation_agent import OverAllocationAgent
 from natilah.agents.power_agent import PowerEfficiencyAgent
 from natilah.agents.queue_efficiency_agent import QueueEfficiencyAgent
+from natilah.agents.recurring_spend_agent import RecurringSpendAgent
 from natilah.agents.storage_agent import StorageEfficiencyAgent
 from natilah.agents.training_agent import TrainingEfficiencyAgent
+from natilah.engine.calibration import ConfidenceCalibrator
 from natilah.engine.claim import GPUHourLedger
 from natilah.engine.history import HistoricalPatternIndex
+from natilah.engine.selection import select_compatible
 from natilah.engine.state_reconstructor import ClusterStateReconstructor
 from natilah.engine.value_calculator import ValueCalculator, default_economic_config
 from natilah.models.database import CostConfigModel, load_cluster_dataset, save_findings
@@ -71,14 +75,36 @@ def default_agents(value_calculator: ValueCalculator | None = None, use_llm: boo
     ]
 
 
+def default_household_agents():
+    """The consumer fleet. One agent per meter, exactly as on the cluster side.
+
+    Claim recovery is metered in one-time dollars and recurring spend in
+    dollars per month. They never touch each other's meter, so the ledger can
+    hold both without one cancelling the other.
+    """
+    return [
+        ClaimRecoveryAgent(),
+        RecurringSpendAgent(),
+    ]
+
+
 class AgentCoordinator:
     """Runs every specialized agent, then deduplicates, resolves, and ranks."""
 
-    def __init__(self, agents=None, top_n: int = 10, use_llm: bool | None = None):
+    def __init__(
+        self,
+        agents=None,
+        top_n: int = 10,
+        use_llm: bool | None = None,
+        calibrator: ConfidenceCalibrator | None = None,
+    ):
         self.safety = SafetyGuard()
         self.top_n = top_n
         self.use_llm = use_llm
         self.agents = agents if agents is not None else default_agents(use_llm=use_llm)
+        # Optional. Without one, confidence stays the agent's own heuristic and
+        # nothing pretends it has been validated against outcomes.
+        self.calibrator = calibrator
 
     # ------------------------------------------------------------------ entry
 
@@ -107,12 +133,23 @@ class AgentCoordinator:
         time_range: TimeRange | None = None,
     ) -> tuple[list[Finding], CoordinationReport]:
         report = CoordinationReport(generated_at=datetime.now(timezone.utc))
-        if not dataset.jobs:
-            report.notes.append("No jobs in the ingested window.")
-            return [], report
 
-        reconstructor = ClusterStateReconstructor(dataset)
-        history = HistoricalPatternIndex(dataset)
+        # Household datasets carry no scheduler decisions, so the reconstructor
+        # and the history index have nothing to build from. Every agent already
+        # accepts them as optional; the consumer agents simply ignore them.
+        is_cluster = hasattr(dataset, "jobs")
+        if is_cluster:
+            if not dataset.jobs:
+                report.notes.append("No jobs in the ingested window.")
+                return [], report
+            reconstructor = ClusterStateReconstructor(dataset)
+            history = HistoricalPatternIndex(dataset)
+        else:
+            if not getattr(dataset, "has_domain_data", False):
+                report.notes.append("No claims or recurring charges in the ingested window.")
+                return [], report
+            reconstructor = None
+            history = None
 
         all_findings: list[Finding] = []
         for agent in self.agents:
@@ -131,15 +168,58 @@ class AgentCoordinator:
 
     # ----------------------------------------------------------- coordination
 
+    def apply_calibration(self, findings: list[Finding]) -> int:
+        """Replace heuristic confidence with the calibrated probability.
+
+        Ranking is expected value, so an uncalibrated confidence quietly
+        distorts every comparison across the fleet. The raw score is kept
+        beside the calibrated one rather than overwritten.
+        """
+        if self.calibrator is None or not self.calibrator.is_fitted():
+            return 0
+        changed = 0
+        for finding in findings:
+            assessment = finding.confidence
+            if assessment is None or assessment.calibrated:
+                continue
+            raw = assessment.score
+            calibrated = self.calibrator.calibrate(raw, finding.agent_name or "")
+            assessment.raw_score = raw
+            assessment.score = calibrated
+            assessment.calibrated = True
+            assessment.explanation = (
+                f"{assessment.explanation} Calibrated from {raw:.2f} to {calibrated:.2f} "
+                "against recorded reviewer outcomes."
+            )
+            changed += 1
+        return changed
+
     def coordinate(self, findings: list[Finding], report: CoordinationReport) -> list[Finding]:
         report.total_findings = len(findings)
+        calibrated = self.apply_calibration(findings)
+        if calibrated:
+            report.notes.append(
+                f"Confidence calibrated against recorded outcomes for {calibrated} finding(s)."
+            )
         report.claimed_gpu_hours = sum(f.claim.gpu_hours for f in findings)
         report.claimed_monthly_value = sum(f.value.estimated_monthly_value for f in findings)
 
         ordered = sorted(findings, key=self._expected_value, reverse=True)
+
+        # Conflicts are resolved globally rather than greedily. Two findings
+        # that each block one big finding can be worth more together than the
+        # big one is alone, and the greedy walk could never see that.
+        by_id = {f.opportunity_id: f for f in ordered}
+        weights = {f.opportunity_id: max(0.0, self._expected_value(f)) for f in ordered}
+        selection = select_compatible(weights, self._conflict_pairs(ordered))
+        report.selection_gain_monthly_value = round(selection.improvement_over_greedy, 4)
+        if selection.improvement_over_greedy > 1e-6:
+            report.notes.append(
+                f"Global conflict selection kept ${selection.improvement_over_greedy:,.2f}/mo of "
+                "expected value that the greedy rule would have dropped."
+            )
+
         ledger = GPUHourLedger()
-        claimed_targets: dict[str, str] = {}
-        claimed_beneficiaries: dict[str, str] = {}
         ranked: list[Finding] = []
         suppressed: list[Finding] = []
 
@@ -148,13 +228,12 @@ class AgentCoordinator:
             attribution.claimed_gpu_hours = finding.claim.gpu_hours
             attribution.claimed_queue_seconds = finding.claim.queue_seconds
 
-            conflict = self._first_conflict(finding, claimed_targets, claimed_beneficiaries)
-            if conflict is not None:
-                winner_id, reason = conflict
+            if finding.opportunity_id in selection.dropped:
+                winners = selection.displaced_by.get(finding.opportunity_id, [])
                 attribution.resolution = Resolution.SUPERSEDED
-                attribution.superseded_by = winner_id
-                attribution.conflicts_with = [winner_id]
-                attribution.notes.append(reason)
+                attribution.superseded_by = winners[0] if winners else None
+                attribution.conflicts_with = list(winners)
+                attribution.notes.append(self._conflict_reason(finding, winners, by_id))
                 report.conflicts_resolved += 1
                 suppressed.append(finding)
                 continue
@@ -193,12 +272,6 @@ class AgentCoordinator:
             else:
                 attribution.resolution = Resolution.UNIQUE
 
-            for job_id in self._mutation_targets(finding):
-                claimed_targets.setdefault(job_id, finding.opportunity_id)
-            for resource in self._resource_targets(finding):
-                claimed_targets.setdefault(resource, finding.opportunity_id)
-            for job_id in finding.claim.queue_job_ids:
-                claimed_beneficiaries.setdefault(job_id, finding.opportunity_id)
             ranked.append(finding)
             meter_key = finding.claim.primary_meter.value
             report.findings_by_meter[meter_key] = report.findings_by_meter.get(meter_key, 0) + 1
@@ -297,6 +370,62 @@ class AgentCoordinator:
         if kind == "place" and primary and not action.get("start_job_id"):
             targets.add(primary)
         return targets
+
+    def _exclusive_keys(self, finding: Finding) -> set[str]:
+        """Everything this finding would take exclusive control of.
+
+        Two findings conflict exactly when these sets intersect: the same job
+        resized twice, the same volume deleted twice, the same waiting job
+        started by two different releases.
+        """
+        keys = set(self._mutation_targets(finding))
+        keys |= self._resource_targets(finding)
+        keys |= {f"queue_beneficiary:{jid}" for jid in finding.claim.queue_job_ids}
+        return keys
+
+    def _conflict_pairs(self, findings: list[Finding]) -> set[tuple[str, str]]:
+        """Unordered pairs that cannot both be applied.
+
+        Built by inverting the key sets, so this stays linear in the number of
+        findings rather than quadratic. Only findings that actually touch the
+        same resource ever meet.
+        """
+        by_key: dict[str, list[str]] = {}
+        for finding in findings:
+            for key in self._exclusive_keys(finding):
+                by_key.setdefault(key, []).append(finding.opportunity_id)
+
+        pairs: set[tuple[str, str]] = set()
+        for holders in by_key.values():
+            if len(holders) < 2:
+                continue
+            unique = sorted(set(holders))
+            for i, a in enumerate(unique):
+                for b in unique[i + 1 :]:
+                    pairs.add((a, b))
+        return pairs
+
+    def _conflict_reason(
+        self,
+        finding: Finding,
+        winners: list[str],
+        by_id: dict[str, Finding],
+    ) -> str:
+        """Why this finding was dropped, in terms a reviewer can check."""
+        if not winners:
+            return (
+                "Dropped by global conflict selection: it cannot be applied alongside the "
+                "higher-value set that was kept."
+            )
+        contested = sorted(self._exclusive_keys(finding) & self._exclusive_keys(by_id[winners[0]]))
+        what = contested[0].split(":", 1)[-1] if contested else "the same resource"
+        others = (
+            f" and {len(winners) - 1} other selected finding(s)" if len(winners) > 1 else ""
+        )
+        return (
+            f"Both this and finding {winners[0]}{others} would change {what}, and only one "
+            "can be applied. The selected set is worth more in total."
+        )
 
     def _first_conflict(
         self,

@@ -36,6 +36,9 @@ DEFAULT_METER_RATES: dict[str, float] = {
     "replica_hours": 2.21,      # one A100-class replica-hour
     "cpu_hours": 0.04,          # $/vCPU-hour
     "queue_seconds": 0.0,       # priced through the GPU-hours it implies
+    "claim_dollars": 1.0,       # already dollars
+    "refund_dollars": 1.0,      # already dollars
+    "recurring_dollars": 1.0,   # already dollars, per month
 }
 
 # Storage tiers differ by an order of magnitude, so a claim that names its

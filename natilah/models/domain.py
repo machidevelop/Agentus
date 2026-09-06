@@ -414,6 +414,15 @@ class EconomicConfig(BaseModel):
 
 
 class ValueEstimate(BaseModel):
+    """What a finding is worth, separated by how the value actually arrives.
+
+    `estimated_monthly_value` is a run rate: waste that recurs every month
+    until somebody fixes it. `one_time_value` is money recovered exactly once,
+    such as a denied medical claim that gets overturned. Mixing the two is how
+    savings reports stop being auditable, so the ledger keeps them apart and
+    the API reports both.
+    """
+
     gpu_hours_recovered: float
     compute_cost_avoided: float
     equivalent_gpus_recovered: float
@@ -422,6 +431,10 @@ class ValueEstimate(BaseModel):
     assumptions: list[str]
     cost_model_used: EconomicConfig
     gpu_type: str | None = None
+
+    # Non-recurring recovery. Zero for meters that accrue every month.
+    one_time_value: float = 0.0
+    is_recurring: bool = True
 
 
 class ConfidenceFactor(BaseModel):
@@ -432,6 +445,13 @@ class ConfidenceFactor(BaseModel):
 
 
 class ConfidenceAssessment(BaseModel):
+    """How much to trust a finding, and how that number was arrived at.
+
+    `score` is what ranking uses. When a calibrator has been fitted against
+    recorded outcomes, `score` is the calibrated probability and `raw_score`
+    keeps the agent's original heuristic, so a reviewer can always see both.
+    """
+
     score: float
     level: ConfidenceLevel
     factors: list[ConfidenceFactor]
@@ -439,6 +459,8 @@ class ConfidenceAssessment(BaseModel):
     constraints_checked: list[str]
     uncertainty_sources: list[str]
     explanation: str
+    raw_score: float | None = None
+    calibrated: bool = False
 
 
 class UtilizationPoint(BaseModel):
@@ -648,6 +670,9 @@ class CoordinationReport(BaseModel):
     ranked_findings: int = 0
     suppressed_findings: int = 0
     conflicts_resolved: int = 0
+    # Expected monthly value the global selection kept that the older greedy
+    # rule would have discarded. Zero means greedy was already optimal.
+    selection_gain_monthly_value: float = 0.0
     duplicate_gpu_hours_removed: float = 0.0
     duplicate_queue_seconds_removed: float = 0.0
     claimed_gpu_hours: float = 0.0

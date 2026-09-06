@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from natilah import __version__
-from natilah.api.routes import actions, analysis, dashboard, ingestion, opportunities
+from natilah.api.routes import actions, analysis, dashboard, household, ingestion, opportunities
 from natilah.config import settings
 from natilah.models.database import init_db
 
@@ -51,6 +51,7 @@ app.include_router(opportunities.router)
 app.include_router(actions.router)
 app.include_router(ingestion.router)
 app.include_router(analysis.router)
+app.include_router(household.router)
 
 
 @app.get("/api/health")
